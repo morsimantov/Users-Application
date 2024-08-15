@@ -2,12 +2,12 @@ package com.example.myusersapplication.models;
 
 import java.io.Serializable;
 
-public class UserApiResponse implements Serializable {
+public class GetUserResponse implements Serializable {
 
     User data;
     SupportItem support;
 
-    public UserApiResponse(User data, SupportItem support) {
+    public GetUserResponse(User data, SupportItem support) {
         this.data = data;
         this.support = support;
     }

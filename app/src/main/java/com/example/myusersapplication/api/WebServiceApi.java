@@ -2,9 +2,9 @@ package com.example.myusersapplication.api;
 
 import com.example.myusersapplication.models.CreateUserResponse;
 import com.example.myusersapplication.models.UpdateUserResponse;
-import com.example.myusersapplication.models.UserApiResponse;
+import com.example.myusersapplication.models.GetUserResponse;
 import com.example.myusersapplication.models.UserRequest;
-import com.example.myusersapplication.models.UsersListApiResponse;
+import com.example.myusersapplication.models.GetUsersResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -18,10 +18,10 @@ import retrofit2.http.Query;
 public interface WebServiceApi {
 
     @GET("users")
-    Call<UsersListApiResponse> getAllUsers(@Query("page") int page);
+    Call<GetUsersResponse> getAllUsers(@Query("page") int page);
 
     @GET("users/{id}")
-    Call<UserApiResponse> getUser(@Path("id") int id);
+    Call<GetUserResponse> getUser(@Path("id") int id);
 
     @POST("users")
     Call<CreateUserResponse> createUser(@Body UserRequest request);

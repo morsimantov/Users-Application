@@ -3,7 +3,7 @@ package com.example.myusersapplication.models;
 import java.io.Serializable;
 import java.util.List;
 
-public class UsersListApiResponse implements Serializable {
+public class GetUsersResponse implements Serializable {
 
     int page;
     int per_page;
@@ -12,7 +12,7 @@ public class UsersListApiResponse implements Serializable {
     List<User> data;
     SupportItem support;
 
-    public UsersListApiResponse(int page, int per_page, int total, int total_pages, List<User> data, SupportItem support) {
+    public GetUsersResponse(int page, int per_page, int total, int total_pages, List<User> data, SupportItem support) {
         this.page = page;
         this.per_page = per_page;
         this.total = total;
