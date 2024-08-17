@@ -28,24 +28,23 @@ public class UsersRepository {
         this.users = new ArrayList<User>();
     }
 
-    public MutableLiveData<List<User>> getAllUsers() {
-        Call<GetUsersResponse> call = RetrofitClient.getInstance().getApi().getAllUsers(1);
+    public MutableLiveData<List<User>> getAllUsers(int page, DataCallback callback) {
+        Call<GetUsersResponse> call = RetrofitClient.getInstance().getApi().getAllUsers(page);
         call.enqueue(new Callback<GetUsersResponse>() {
             @Override
             public void onResponse(Call<GetUsersResponse> call, Response<GetUsersResponse> response) {
-                if (response.isSuccessful()) {
-                    System.out.println("success");
+                if (response.isSuccessful() && response.body() != null) {
+                    callback.onSuccess(response.body().getData());
                     users.clear();
                     users.addAll(response.body().getData());
                     liveDataUsers.postValue(users);
-
                 }
             }
 
             @Override
             public void onFailure(Call<GetUsersResponse> call, Throwable t) {
                 liveDataUsers.postValue(null);
-                System.out.println("t.getMessage() = " + t.getMessage());
+                callback.onFailure(t);
             }
         });
         return liveDataUsers;
@@ -139,5 +138,10 @@ public class UsersRepository {
             }
         });
         return deleteUserResponse;
+    }
+
+    public interface DataCallback {
+        void onSuccess(List<User> users);
+        void onFailure(Throwable t);
     }
 }
