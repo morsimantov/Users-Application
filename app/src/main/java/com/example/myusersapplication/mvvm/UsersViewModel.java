@@ -50,60 +50,54 @@ public class UsersViewModel extends AndroidViewModel {
 
     // Method to load the pages of users
     public void loadMoreUsers() {
-        // If the data is not currently loading already and if there are more pages
         if (isLoading.getValue() == Boolean.FALSE && hasMorePages) {
-            // Set loading to true
             isLoading.setValue(true);
 
-            // Fetch users from the repository
-            repo.getAllUsers(currentPage, new UsersRepository.DataCallback() {
+            // Set the page size (6 users at a time)
+            int pageSize = 6;
+
+            repo.getAllUsers(currentPage, pageSize, new UsersRepository.DataCallback() {
                 @Override
                 public void onSuccess(List<User> newUsers) {
-                    // Get current list of users
                     List<User> currentUsers = usersLiveData.getValue();
                     if (currentUsers != null) {
                         if (newUsers.isEmpty()) {
-                            // If the new data is empty, mark that there are no more pages
                             hasMorePages = false;
                         } else {
-                            // Add new users to the list
                             currentUsers.addAll(newUsers);
-                            // Update LiveData with the new list
-                            usersLiveData.setValue(currentUsers);
-                            // Increment the page number for the next request
+                            usersLiveData.postValue(currentUsers);
                             currentPage++;
                             hasMorePages = true;
                         }
                     }
-                    isLoading.setValue(false);
+                    isLoading.postValue(false);
                 }
 
                 @Override
                 public void onFailure(Throwable t) {
                     isLoading.setValue(false);
-                    // Handle the error (e.g., show a message to the user)
+                    // Handle the error
                 }
             });
         }
     }
-
     // Fetch a single user by ID
-    public MutableLiveData<User> getUser(int id) {
+    public User getUser(int id) {
         return repo.getUser(id);
     }
 
     // Create a new user
-    public MutableLiveData<CreateUserResponse> createUser(String name, String job) {
-        return repo.createUser(name, job);
+    public MutableLiveData<String> createUser(String email, String firstName, String lastName, String avatar) {
+        return repo.createUser(email, firstName, lastName, avatar);
     }
 
     // Update an existing user by ID
-    public MutableLiveData<UpdateUserResponse> updateUser(int id, String name, String job) {
-        return repo.updateUser(id, name, job);
+    public MutableLiveData<String> updateUser(int id, String email, String firstName, String lastName, String avatar) {
+        return repo.updateUser(id, email, firstName, lastName, avatar);
     }
 
     // Delete a user by ID
-    public MutableLiveData<Boolean> deleteUser(int id) {
-        return repo.deleteUser(id);
-    }
+//    public Boolean deleteUser(int id) {
+//        return repo.deleteUser(id);
+//    }
 }

@@ -1,9 +1,14 @@
 package com.example.myusersapplication.models;
 
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
 import java.io.Serializable;
 
+@Entity(tableName = "users")
 public class User implements Serializable  {
 
+    @PrimaryKey
     int id;
     String email;
     String first_name;
@@ -49,6 +54,7 @@ public class User implements Serializable  {
     public void setLast_name(String last_name) {
         this.last_name = last_name;
     }
+
 
     public String getAvatar() {
         return avatar;

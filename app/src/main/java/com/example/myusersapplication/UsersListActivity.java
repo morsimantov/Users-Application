@@ -22,7 +22,8 @@ public class UsersListActivity extends AppCompatActivity {
     private UsersViewModel usersViewModel;
     private UsersListAdapter adapter;
     private List<User> usersList;
-    private boolean isLoading = false; // Track loading state
+    // Track loading state
+    private boolean isLoading = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
