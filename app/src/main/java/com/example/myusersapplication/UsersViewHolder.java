@@ -1,6 +1,8 @@
 package com.example.myusersapplication;
 
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -13,6 +15,7 @@ public class UsersViewHolder extends RecyclerView.ViewHolder {
     TextView userName, userEmail;
     ImageView avatarImg;
     CardView cardView;
+    ImageButton editButton, deleteButton;
 
     public UsersViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -21,6 +24,8 @@ public class UsersViewHolder extends RecyclerView.ViewHolder {
         userEmail = itemView.findViewById(R.id.email);
         avatarImg = itemView.findViewById(R.id.avatar_img);
         cardView = itemView.findViewById(R.id.main_container);
+        editButton = itemView.findViewById(R.id.edit_button);
+        deleteButton = itemView.findViewById(R.id.delete_button);
     }
 }
 

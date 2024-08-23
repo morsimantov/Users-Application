@@ -17,27 +17,27 @@ public interface UserDao {
     @Insert
     void insertUsers(List<User> users);
 
-    @Query("SELECT * FROM users")
-    List<User> getAllUsers();
-
-    @Query("SELECT * FROM users LIMIT :limit OFFSET :offset")
-    List<User> getUsersWithPaging(int limit, int offset);
-
-    @Query("SELECT * FROM users WHERE id = :id")
-    User getUserById(int id);
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert
     void insertUser(User user);
 
-    @Query("UPDATE users SET email = :email, first_name = :first_name, last_name = :last_name, avatar = :avatar WHERE id = :id")
+    @Query("SELECT * FROM user")
+    List<User> getAllUsers();
+
+    @Query("SELECT * FROM user LIMIT :limit OFFSET :offset")
+    List<User> getUsersWithPaging(int limit, int offset);
+
+    @Query("SELECT * FROM user WHERE id = :id")
+    User getUserById(int id);
+
+    @Query("UPDATE user SET email = :email, first_name = :first_name, last_name = :last_name, avatar = :avatar WHERE id = :id")
     void updateUserById(int id, String email, String first_name, String last_name, String avatar);
 
-    @Query("DELETE FROM users WHERE id = :id")
+    @Query("DELETE FROM user WHERE id = :id")
     int deleteUser(int id);
 
-    @Query("SELECT * FROM users WHERE email = :email")
+    @Query("SELECT * FROM user WHERE email = :email")
     User getUserByEmail(String email);
 
-    @Query("SELECT COUNT(*) FROM users")
+    @Query("SELECT COUNT(*) FROM user")
     int getUserCount();
 }
