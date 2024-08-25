@@ -1,153 +1,87 @@
 package com.example.myusersapplication.mvvm;
 
 import android.content.Context;
-
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
-import com.example.myusersapplication.api.RetrofitClient;
 import com.example.myusersapplication.db.AppDatabase;
 import com.example.myusersapplication.db.UserDao;
-import com.example.myusersapplication.models.GetUsersResponse;
 import com.example.myusersapplication.models.User;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import java.util.concurrent.Executors;
 
 public class UsersRepository {
 
     private UserDao userDao;
-    private List<User> users;
-    private Context context;
+    private MutableLiveData<String> operationStatus;
+    private LiveData<List<User>> allUsersLiveData;
 
     public UsersRepository(Context context) {
-        this.context = context;
         AppDatabase db = AppDatabase.getDatabase(context);
         this.userDao = db.userDao();
-        users = new ArrayList<>(); // Initialize the cache
-        initializeData();
+        this.operationStatus = new MutableLiveData<>();
+        this.allUsersLiveData = userDao.getAllUsersLiveData(); // Ensure this method exists in UserDao
     }
 
-    private void initializeData() {
-        // Load initial data if database is empty
-        new Thread(() -> {
-            if (userDao.getUserCount() == 0) {
-                fetchUsersFromApi(1, new DataCallback() {
-                    @Override
-                    public void onSuccess(List<User> users) {
-                        System.out.println("Initial data fetch successful, number of users fetched: " + users.size());
-                    }
-
-                    @Override
-                    public void onFailure(Throwable t) {
-                        System.err.println("Initial data fetch failed: " + t.getMessage());
-                    }
-                });
-            }
-        }).start();
+    // Method to get all users as LiveData
+    public LiveData<List<User>> getAllUsersLiveData() {
+        return allUsersLiveData;
     }
 
-    public void getAllUsers(int page, int pageSize, DataCallback callback) {
-        new Thread(() -> {
-            // Calculate the offset (number of users to skip)
-            int offset = (page - 1) * pageSize;
-
-            // Fetch users with paging from the Room database
-            List<User> localUsers = userDao.getUsersWithPaging(pageSize, offset);
-            if (localUsers != null && !localUsers.isEmpty()) {
-                // If users are found locally, return them
-                callback.onSuccess(localUsers);
-            } else if (userDao.getUserCount() == 0) {
-                // If the local database is empty, fetch from the API
-                fetchUsersFromApi(page, callback);
-            } else {
-                // If no users are found for this page, return an empty list
-                callback.onSuccess(new ArrayList<>());
-            }
-        }).start();
+    // Method to get the operation status
+    public LiveData<String> getOperationStatus() {
+        return operationStatus;
     }
 
-    private void fetchUsersFromApi(int page, DataCallback callback) {
-        Call<GetUsersResponse> call = RetrofitClient.getInstance().getApi().getAllUsers(page);
-        call.enqueue(new Callback<GetUsersResponse>() {
-            @Override
-            public void onResponse(Call<GetUsersResponse> call, Response<GetUsersResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    List<User> newUsers = response.body().getData();
-                    if (!newUsers.isEmpty()) {
-                        // Insert new users into the Room database
-                        new Thread(() -> userDao.insertUsers(newUsers)).start();
-                    }
-                    callback.onSuccess(newUsers);
-                } else {
-                    callback.onSuccess(new ArrayList<>());  // Return an empty list if no data
+    // Method to insert a user
+    public void insertUser(String email, String firstName, String lastName, String avatar) {
+        Executors.newSingleThreadExecutor().execute(() -> {
+            try {
+                // Check if the email already exists
+                User user = userDao.getUserByEmail(email);
+                if (user != null) {
+                    operationStatus.postValue("User with this email already exists");
+                    return;
                 }
-            }
 
-            @Override
-            public void onFailure(Call<GetUsersResponse> call, Throwable t) {
-                callback.onFailure(t);
+                User newUser = new User(0, email, firstName, lastName, avatar);
+                userDao.insertUser(newUser);
+                operationStatus.postValue("User created successfully");
+            } catch (Exception e) {
+                operationStatus.postValue("Error inserting user: " + e.getMessage());
             }
         });
     }
 
-    public User getUser(int id) {
-        return userDao.getUserById(id);
-    }
-
-    public MutableLiveData<String> addUser(String email, String firstName, String lastName, String avatar) {
-        MutableLiveData<String> resultMessage = new MutableLiveData<>();
-
-        User newUser = new User(
-                0,  // Set the id to 0 or any placeholder (Room will auto-generate it)
-                email,
-                firstName,
-                lastName,
-                avatar
-        );
-
-        new Thread(() -> {
+    // Method to delete a user
+    public void deleteUser(int userId) {
+        Executors.newSingleThreadExecutor().execute(() -> {
             try {
-                User existingUser = userDao.getUserByEmail(email);
-                if (existingUser != null) {
-                    resultMessage.postValue("User with this email already exists");
-                } else {
-                    userDao.insertUser(newUser);
-                    resultMessage.postValue("User created successfully");
-                }
+                userDao.deleteUser(userId);
+                operationStatus.postValue("User deleted successfully");
             } catch (Exception e) {
-                resultMessage.postValue("Failed to create user: " + e.getMessage());
+                operationStatus.postValue("Error deleting user: " + e.getMessage());
             }
-        }).start();
-
-        return resultMessage;
+        });
     }
 
-    public MutableLiveData<String> updateUser(int id, String email, String firstName, String lastName, String avatar) {
-        MutableLiveData<String> updateStatus = new MutableLiveData<>();
-
-        new Thread(() -> {
-            User userWithSameEmail = userDao.getUserByEmail(email);
-            if (userWithSameEmail != null && userWithSameEmail.getId() != id) {
-                updateStatus.postValue("User with this email already exists");
-            } else {
-                try {
-                    userDao.updateUserById(id, email, firstName, lastName, avatar);
-                    updateStatus.postValue("User updated successfully");
-                } catch (Exception e) {
-                    updateStatus.postValue("Failed to update user");
+    // Method to update a user
+    public void updateUser(int id, String email, String firstName, String lastName, String avatar) {
+        Executors.newSingleThreadExecutor().execute(() -> {
+            try {
+                // Check if the email already exists
+                User user = userDao.getUserByEmail(email);
+                if (user != null && user.getId() != id) {
+                    operationStatus.postValue("User with this email already exists");
+                    return;
                 }
+                userDao.updateUserById(id, email, firstName, lastName, avatar);
+                operationStatus.postValue("User updated successfully");
+            } catch (Exception e) {
+                operationStatus.postValue("Error updating user: " + e.getMessage());
             }
-        }).start();
-
-        return updateStatus;
-    }
-
-    public interface DataCallback {
-        void onSuccess(List<User> users);
-        void onFailure(Throwable t);
+        });
     }
 }

@@ -1,18 +1,26 @@
 package com.example.myusersapplication;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myusersapplication.models.User;
 import com.example.myusersapplication.mvvm.UsersViewModel;
+import com.example.myusersapplication.mvvm.UsersViewModelFactory;
+import com.example.myusersapplication.utils.ImageUtils;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.squareup.picasso.Picasso;
@@ -22,7 +30,14 @@ public class EditUserFragment extends DialogFragment {
     private static final String ARG_USER = "user";
     private UsersViewModel usersViewModel;
 
-    public static EditUserFragment newInstance(User user) {
+    private TextInputEditText firstNameInput;
+    private TextInputEditText lastNameInput;
+    private TextInputEditText emailInput;
+    private ImageView avatarImageView;
+
+    private String avatarFilePath;
+
+    public static EditUserFragment newInstance(User user ) {
         EditUserFragment fragment = new EditUserFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_USER, user); // Pass the full user object
@@ -41,78 +56,116 @@ public class EditUserFragment extends DialogFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        usersViewModel = new ViewModelProvider(requireActivity()).get(UsersViewModel.class);
-
         TextInputLayout firstNameLayout = view.findViewById(R.id.outlined_first_name);
         TextInputLayout lastNameLayout = view.findViewById(R.id.outlined_last_name);
         TextInputLayout emailLayout = view.findViewById(R.id.outlined_email);
-        ImageView avatarImageView = view.findViewById(R.id.edit_avatar);
+        avatarImageView = view.findViewById(R.id.avatar_img);
 
-        TextInputEditText firstNameInput = (TextInputEditText) firstNameLayout.getEditText();
-        TextInputEditText lastNameInput = (TextInputEditText) lastNameLayout.getEditText();
-        TextInputEditText emailInput = (TextInputEditText) emailLayout.getEditText();
+        firstNameInput = (TextInputEditText) firstNameLayout.getEditText();
+        lastNameInput = (TextInputEditText) lastNameLayout.getEditText();
+        emailInput = (TextInputEditText) emailLayout.getEditText();
+
+        // Initialize ViewModel with factory
+        UsersViewModelFactory factory = new UsersViewModelFactory(requireActivity().getApplication());
+        usersViewModel = new ViewModelProvider(this, factory).get(UsersViewModel.class);
+
+        Button cancelButton = view.findViewById(R.id.cancelButton);
+        ImageButton closeButton = view.findViewById(R.id.close_button);
+        Button avatarUploadButton = view.findViewById(R.id.button_upload_avatar);
 
         // Get the User object from the arguments
         User user = (User) getArguments().getSerializable(ARG_USER);
+        // Trigger image picker
+        avatarUploadButton.setOnClickListener(v -> ImageUtils.openImageChooser(this));
 
         if (user != null) {
             // Populate the fields with user data
             firstNameInput.setText(user.getFirst_name());
             lastNameInput.setText(user.getLast_name());
             emailInput.setText(user.getEmail());
+
             String urlImg = user.getAvatar();
-            // Load avatar using Picasso
-            if (urlImg != null) {
-                Picasso.get().load(user.getAvatar()).into(avatarImageView);
+            // Check if urlImg is null or empty
+            if (urlImg != null && !urlImg.isEmpty()) {
+                if (urlImg.startsWith("https")) {
+                    Picasso.get()
+                            .load(urlImg)
+                            .placeholder(R.drawable.not_available) // Default drawable resource
+                            .into(avatarImageView);
+                } else {
+                    avatarImageView.setImageURI(Uri.parse(urlImg));
+                }
             } else {
-                // Log or handle the null case, avatarImageView was not found
-                Picasso.get().load(user.getAvatar()).placeholder(R.drawable.not_available).into(avatarImageView);
+                // Set a default image if urlImg is null or empty
+                avatarImageView.setImageResource(R.drawable.not_available);
             }
+
         }
 
+        usersViewModel.getOperationStatus().observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(String result) {
+                if (result != null) {
+                    // Log result to verify
+                    Log.d("EditUserFragment", "Operation Status: " + result);
+
+                    // Show Snackbar message using the root view of the fragment
+                    Snackbar.make(view, result, Snackbar.LENGTH_SHORT).show();
+                    if (result.equals("User updated successfully")) {
+                        dismiss(); // Close the dialog on success
+                    }
+                    usersViewModel.getOperationStatus().removeObserver(this); // Remove observer
+                }
+            }
+        });
+
         // Handle save button
-        Button submitButton = view.findViewById(R.id.button_save_changes);
-        submitButton.setOnClickListener(v -> {
+        Button saveButton = view.findViewById(R.id.saveButton);
+        saveButton.setOnClickListener(v -> {
+
             String firstName = firstNameInput != null ? firstNameInput.getText().toString().trim() : "";
             String lastName = lastNameInput != null ? lastNameInput.getText().toString().trim() : "";
             String email = emailInput != null ? emailInput.getText().toString().trim() : "";
 
-            if (validateInputs(firstName, lastName, email)) {
+            if (validateInputs()) {
                 // Update the user with new data
                 user.setFirst_name(firstName);
                 user.setLast_name(lastName);
                 user.setEmail(email);
+                if (avatarFilePath != null) {
+                    user.setAvatar(avatarFilePath);
+                }
+                usersViewModel.updateUser(user.getId(), email, firstName, lastName, user.getAvatar());
 
-                usersViewModel.updateUser(user.getId(), user.getEmail(), user.getFirst_name(), user.getLast_name(), user.getAvatar())
-                        .observe(getViewLifecycleOwner(), result -> {
-                            // Handle the result of the update (success or failure)
-                        });
+                // Close the dialog
+                dismiss();
             }
         });
+
+        // Cancel button logic
+        cancelButton.setOnClickListener(v -> dismiss());
+        closeButton.setOnClickListener(v -> dismiss());
     }
 
-    private void loadUserDetails(String userId, TextInputEditText firstNameInput, TextInputEditText lastNameInput, TextInputEditText emailInput, ImageView avatarImageView) {
-        // Logic to load user details, including avatar URL
-        // Example:
-        String avatarUrl = "https://reqres.in/img/faces/" + userId + "-image.jpg";  // Modify this as needed
-
-        // Load avatar image with Picasso
-        Picasso.get().load(avatarUrl).placeholder(R.drawable.not_available).into(avatarImageView);
-
-        // Populate other fields (pseudo-code)
-        // firstNameInput.setText(user.getFirstName());
-        // lastNameInput.setText(user.getLastName());
-        // emailInput.setText(user.getEmail());
-    }
-
-    // Helper method to validate inputs
-    private boolean validateInputs(String firstName, String lastName, String email) {
-        // Example validation
-        if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty()) {
-            // Show error messages or feedback to the user
+    private boolean validateInputs() {
+        if (firstNameInput.getText().toString().trim().isEmpty()) {
+            firstNameInput.setError("First name is required");
             return false;
         }
-        // Additional validation logic if needed
+        if (lastNameInput.getText().toString().trim().isEmpty()) {
+            lastNameInput.setError("Last name is required");
+            return false;
+        }
+        if (emailInput.getText().toString().trim().isEmpty()) {
+            emailInput.setError("Email is required");
+            return false;
+        }
         return true;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        avatarFilePath = ImageUtils.handleImageChooserResult(requestCode, resultCode, data, avatarImageView, requireActivity());
     }
 }

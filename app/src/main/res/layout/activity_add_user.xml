@@ -1,63 +1,83 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    tools:context=".MainActivity"
-    tools:ignore="HardcodedText">
+    android:padding="24dp">
+
+
     <!-- Title -->
     <TextView
         android:id="@+id/form_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
         android:text="Add a New User"
-        android:textSize="19sp"
+        android:textSize="20sp"
         android:fontFamily="@font/poppins"
+        android:layout_marginBottom="16dp"
         android:textColor="@color/purple_700"
-        android:layout_toStartOf="@id/button_close"
-        android:layout_alignParentStart="true"/>
+        android:layout_alignParentStart="true" />
 
-    <EditText
-        android:id="@+id/firstName"
+    <!-- First Name Input -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/outlined_first_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
         android:hint="First Name"
-        android:inputType="text" />
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_below="@id/form_title">
 
-    <EditText
-        android:id="@+id/lastName"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/first_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Last Name Input -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/outlined_last_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
         android:hint="Last Name"
-        android:inputType="text" />
+        android:layout_marginTop="16dp"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_below="@id/outlined_first_name">
 
-    <EditText
-        android:id="@+id/email"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/last_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Email Input -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/outlined_email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
         android:hint="Email"
-        android:inputType="textEmailAddress" />
+        android:layout_marginTop="16dp"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_below="@id/outlined_last_name">
 
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textEmailAddress" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Avatar Upload Section -->
     <LinearLayout
+        android:id="@+id/avatar_upload_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:gravity="start"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_marginTop="20dp"
+        android:layout_below="@id/outlined_email"
+        android:gravity="start">
+
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/input_avatar"
             android:layout_width="157dp"
@@ -65,25 +85,23 @@
             android:src="@drawable/upload"
             android:contentDescription="Avatar Image"
             app:shapeAppearanceOverlay="@style/CircularImageView"
-            android:layout_marginStart="16dp"
-            android:scaleType="centerCrop"/>
+            android:scaleType="centerCrop" />
+
         <Button
             android:id="@+id/uploadButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/purple_500"
             android:text="UPLOAD AVATAR"
-            android:textColor="@android:color/white"
-            android:layout_marginStart="16dp"
-            tools:ignore="ButtonStyle" />
-
-
+            android:textColor="@android:color/white" />
     </LinearLayout>
 
+    <!-- Save and Cancel Buttons -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_below="@id/avatar_upload_layout"
+        android:layout_marginTop="18dp"
         android:gravity="end"
         android:orientation="horizontal">
 
@@ -100,11 +118,9 @@
             android:id="@+id/saveButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
             android:backgroundTint="@color/purple_500"
             android:text="SAVE"
-            android:textColor="@android:color/white"
-            tools:ignore="ButtonStyle" />
-
+            android:textColor="@android:color/white" />
     </LinearLayout>
-</LinearLayout>
+
+</RelativeLayout>

@@ -2,15 +2,18 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="24dp">
 
     <!-- Close Button -->
-    <ImageView
-        android:id="@+id/button_close"
+    <ImageButton
+        android:id="@+id/close_button"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:src="@drawable/ic_baseline_close_24"
         android:contentDescription="Close"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="8dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"/>
 
@@ -24,7 +27,7 @@
         android:fontFamily="@font/poppins"
         android:layout_marginBottom="24dp"
         android:textColor="@color/purple_700"
-        android:layout_toStartOf="@id/button_close"
+        android:layout_toStartOf="@id/close_button"
         android:layout_alignParentStart="true"/>
 
     <!-- First Name Input -->
@@ -86,14 +89,21 @@
         android:layout_marginTop="16dp"
         android:layout_below="@id/outlined_email">
 
-        <ImageView
-            android:id="@+id/edit_avatar"
+        <androidx.cardview.widget.CardView
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:src="@drawable/not_available"
-            android:contentDescription="Avatar Image"
-            android:scaleType="centerCrop"
-            android:layout_marginEnd="16dp" />
+            android:layout_gravity="center_vertical"
+            app:cardElevation="4dp"
+            app:cardCornerRadius="3dp">
+
+            <ImageView
+                android:id="@+id/avatar_img"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop"
+                android:src="@drawable/not_available"/>
+        </androidx.cardview.widget.CardView>
 
         <Button
             android:id="@+id/button_upload_avatar"
@@ -102,18 +112,37 @@
             android:text="Upload Avatar"
             android:textSize="12sp"
             android:textColor="@color/purple_700"
-            android:layout_gravity="center_vertical"
+            android:layout_gravity="bottom"
+            android:layout_marginLeft="16dp"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
     </LinearLayout>
 
-    <!-- Save Button -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/button_save_changes"
+    <!-- Save and Cancel Buttons -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Save Changes"
-        android:layout_marginTop="24dp"
         android:layout_below="@id/avatar_upload_layout"
-        style="@style/Widget.MaterialComponents.Button" />
+        android:layout_marginTop="18dp"
+        android:gravity="end"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/cancelButton"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:text="CANCEL"
+            android:textColor="@color/purple_500" />
+
+        <Button
+            android:id="@+id/saveButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/purple_500"
+            android:text="SAVE"
+            android:textColor="@android:color/white" />
+
+    </LinearLayout>
 
 </RelativeLayout>
