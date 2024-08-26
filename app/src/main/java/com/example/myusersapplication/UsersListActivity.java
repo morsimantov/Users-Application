@@ -1,5 +1,6 @@
 package com.example.myusersapplication;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,6 +11,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -36,6 +38,7 @@ public class UsersListActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_users_list);
 
@@ -47,9 +50,12 @@ public class UsersListActivity extends AppCompatActivity {
         recycler.setAdapter(adapter);
 
         addUserButton.setOnClickListener(v -> {
-            // Start AddUserActivity
             Intent intent = new Intent(UsersListActivity.this, AddUserActivity.class);
-            startActivity(intent);
+            // Set up the transition for shared elements
+            ActivityOptions options = ActivityOptions
+                    .makeSceneTransitionAnimation(this, addUserButton, "transition_fab");
+            // Start the new activity
+            startActivity(intent, options.toBundle());
         });
 
         // Initialize ViewModel with factory

@@ -4,4 +4,8 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">3%</item> <!-- Adjust the percentage based on your requirements -->
     </style>
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Define the attribute here. -->
+        <item name="android:windowContentTransitions">true</item>
+    </style>
 </resources>

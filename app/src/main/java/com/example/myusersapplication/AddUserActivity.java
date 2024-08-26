@@ -2,6 +2,7 @@ package com.example.myusersapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.transition.TransitionInflater;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
@@ -78,7 +79,7 @@ public class AddUserActivity extends AppCompatActivity {
         });
 
         // Cancel button logic
-        cancelButton.setOnClickListener(v -> finish());
+        cancelButton.setOnClickListener(v -> finishAfterTransition());
     }
 
     private boolean validateInputs() {
