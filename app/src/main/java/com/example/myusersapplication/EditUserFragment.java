@@ -114,7 +114,6 @@ public class EditUserFragment extends DialogFragment {
                     if (result.equals("User updated successfully")) {
                         dismiss(); // Close the dialog on success
                     }
-                    usersViewModel.getOperationStatus().removeObserver(this); // Remove observer
                 }
             }
         });
@@ -136,9 +135,6 @@ public class EditUserFragment extends DialogFragment {
                     user.setAvatar(avatarFilePath);
                 }
                 usersViewModel.updateUser(user.getId(), email, firstName, lastName, user.getAvatar());
-
-                // Close the dialog
-                dismiss();
             }
         });
 
