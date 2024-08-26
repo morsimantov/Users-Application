@@ -23,33 +23,35 @@ import retrofit2.Response;
 
 public class UsersRepository {
 
-    private static final String PREFS_NAME = "MyAppPrefs";
-    private static final String KEY_INITIALIZED = "initialized";
+//    private static final String PREFS_NAME = "MyAppPrefs";
+//    private static final String KEY_INITIALIZED = "initialized";
 
     private UserDao userDao;
     private MutableLiveData<String> operationStatus;
     private LiveData<List<User>> allUsersLiveData;
     private SharedPreferences sharedPreferences;
 
+    private int currentPage = 1;
+
     public UsersRepository(Context context) {
         AppDatabase db = AppDatabase.getDatabase(context);
         this.userDao = db.userDao();
         this.operationStatus = new MutableLiveData<>();
-        this.sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+//        this.sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         this.allUsersLiveData = userDao.getAllUsersLiveData();
         initializeData();
     }
 
     private void initializeData() {
         Executors.newSingleThreadExecutor().execute(() -> {
-            boolean initialized = sharedPreferences.getBoolean(KEY_INITIALIZED, false);
-            if (!initialized) {
+//            boolean initialized = sharedPreferences.getBoolean(KEY_INITIALIZED, false);
+//            if (!initialized) {
                 List<User> users = userDao.getAllUsers();
                 if (users == null || users.isEmpty()) {
-                    fetchUsersFromApi(1); // Fetch users from the first page
+                    fetchUsersFromApi(currentPage); // Fetch users from the first page
                 }
-                sharedPreferences.edit().putBoolean(KEY_INITIALIZED, true).apply();
-            }
+//                sharedPreferences.edit().putBoolean(KEY_INITIALIZED, true).apply();
+//            }
         });
     }
 
@@ -64,6 +66,8 @@ public class UsersRepository {
                         // Insert new users into the Room database
                         Executors.newSingleThreadExecutor().execute(() -> userDao.insertUsers(newUsers));
                         operationStatus.postValue("Users loaded from API");
+                        // Increment the page for next request
+                        currentPage++;
                     }
                 } else {
                     operationStatus.postValue("Failed to load users from API");
@@ -75,6 +79,11 @@ public class UsersRepository {
                 operationStatus.postValue("Error fetching users from API: " + t.getMessage());
             }
         });
+    }
+
+    // Method to get users with paging
+    public LiveData<List<User>> getUsersWithPaging(int limit, int offset) {
+        return userDao.getUsersWithPaging(limit, offset);
     }
 
     // Method to get all users as LiveData

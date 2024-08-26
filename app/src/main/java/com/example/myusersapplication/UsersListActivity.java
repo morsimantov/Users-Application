@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -31,10 +33,7 @@ public class UsersListActivity extends AppCompatActivity {
     private UsersViewModel usersViewModel;
     private UsersListAdapter adapter;
     private List<User> usersList;
-    // Track loading state
-    private boolean isLoading = false;
     private FloatingActionButton addUserButton;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +73,9 @@ public class UsersListActivity extends AppCompatActivity {
             }
         });
 
+        // Load initial data
+        usersViewModel.loadNextPage(0);
+
         // Observe operationStatus
         usersViewModel.getOperationStatus().observe(this, new Observer<String>() {
             @Override
@@ -85,31 +87,20 @@ public class UsersListActivity extends AppCompatActivity {
             }
         });
 
-
-        // Observe loading state
-//        usersViewModel.getIsLoading().observe(this, new Observer<Boolean>() {
-//            @Override
-//            public void onChanged(Boolean loading) {
-//                isLoading = loading;
-//            }
-//        });
-
         // Scroll listener to load more users when reaching the end of the list
-//        recycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
-//            @Override
-//            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-//                super.onScrolled(recyclerView, dx, dy);
-//                GridLayoutManager layoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
-//                int visibleItemCount = layoutManager.getChildCount();
-//                int totalItemCount = layoutManager.getItemCount();
-//                int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
-//                // If we are not currently loading and if we've reached the end of the list
-//                if (!isLoading && (visibleItemCount + firstVisibleItemPosition) >= totalItemCount) {
-//                    // Trigger the method to load more users
-//                    usersViewModel.loadMoreUsers();
-//                }
-//            }
-//        });
+        recycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                // Check if we have reached the end of the list and load more data
+                if (!recyclerView.canScrollVertically(1)) {
+                    // Load the next page
+                    int offset = adapter.getItemCount();
+                    Log.d(null, "offset is: " + offset);
+                    usersViewModel.loadNextPage(offset);
+                }
+            }
+        });
     }
 
     @Override
@@ -117,6 +108,4 @@ public class UsersListActivity extends AppCompatActivity {
         super.onResume();
         adapter.notifyDataSetChanged();
     }
-
-
 }

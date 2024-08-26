@@ -9,7 +9,7 @@ import androidx.room.RoomDatabase;
 
 import com.example.myusersapplication.models.User;
 
-@Database(entities = {User.class}, version = 4)
+@Database(entities = {User.class}, version = 5)
 public abstract class AppDatabase extends RoomDatabase {
 
     // A singleton instance of the database
