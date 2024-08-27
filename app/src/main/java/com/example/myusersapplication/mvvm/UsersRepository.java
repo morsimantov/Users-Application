@@ -2,6 +2,9 @@ package com.example.myusersapplication.mvvm;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -23,39 +26,31 @@ import retrofit2.Response;
 
 public class UsersRepository {
 
-//    private static final String PREFS_NAME = "MyAppPrefs";
-//    private static final String KEY_INITIALIZED = "initialized";
-
     private UserDao userDao;
-    private MutableLiveData<String> operationStatus;
-    private LiveData<List<User>> allUsersLiveData;
-    private SharedPreferences sharedPreferences;
-
-    private int currentPage = 1;
+    private MutableLiveData<String> operationStatus = new MutableLiveData<>();
 
     public UsersRepository(Context context) {
         AppDatabase db = AppDatabase.getDatabase(context);
         this.userDao = db.userDao();
-        this.operationStatus = new MutableLiveData<>();
-//        this.sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        this.allUsersLiveData = userDao.getAllUsersLiveData();
-        initializeData();
     }
 
-    private void initializeData() {
+    // Method to get users with paging
+    public LiveData<List<User>> getUsersWithPaging(int limit, int offset) {
+        MutableLiveData<List<User>> data = new MutableLiveData<>();
         Executors.newSingleThreadExecutor().execute(() -> {
-//            boolean initialized = sharedPreferences.getBoolean(KEY_INITIALIZED, false);
-//            if (!initialized) {
-                List<User> users = userDao.getAllUsers();
-                if (users == null || users.isEmpty()) {
-                    fetchUsersFromApi(currentPage); // Fetch users from the first page
-                }
-//                sharedPreferences.edit().putBoolean(KEY_INITIALIZED, true).apply();
-//            }
+            List<User> usersFromDb = userDao.getUsersWithPagingSync(limit, offset);
+            if (usersFromDb != null && !usersFromDb.isEmpty()) {
+                data.postValue(usersFromDb);
+            } else {
+                int page_number = offset / limit + 1;
+                fetchUsersFromApi(page_number, data); // Pass MutableLiveData to update it with fetched data
+                Log.d(null, "fetching from API page number: " + page_number);
+            }
         });
+        return data;
     }
 
-    private void fetchUsersFromApi(int page) {
+    private void fetchUsersFromApi(int page, MutableLiveData<List<User>> data) {
         Call<GetUsersResponse> call = RetrofitClient.getInstance().getApi().getAllUsers(page);
         call.enqueue(new Callback<GetUsersResponse>() {
             @Override
@@ -63,11 +58,11 @@ public class UsersRepository {
                 if (response.isSuccessful() && response.body() != null) {
                     List<User> newUsers = response.body().getData();
                     if (!newUsers.isEmpty()) {
-                        // Insert new users into the Room database
-                        Executors.newSingleThreadExecutor().execute(() -> userDao.insertUsers(newUsers));
+                        Executors.newSingleThreadExecutor().execute(() -> {
+                            userDao.insertUsers(newUsers);
+                            data.postValue(newUsers); // Update data LiveData
+                        });
                         operationStatus.postValue("Users loaded from API");
-                        // Increment the page for next request
-                        currentPage++;
                     }
                 } else {
                     operationStatus.postValue("Failed to load users from API");
@@ -79,16 +74,6 @@ public class UsersRepository {
                 operationStatus.postValue("Error fetching users from API: " + t.getMessage());
             }
         });
-    }
-
-    // Method to get users with paging
-    public LiveData<List<User>> getUsersWithPaging(int limit, int offset) {
-        return userDao.getUsersWithPaging(limit, offset);
-    }
-
-    // Method to get all users as LiveData
-    public LiveData<List<User>> getAllUsersLiveData() {
-        return allUsersLiveData;
     }
 
     // Method to get the operation status
@@ -116,15 +101,14 @@ public class UsersRepository {
         });
     }
 
-    // Method to delete a user
-    public void deleteUser(int userId) {
+    // New method for deleting a user with a callback
+    public void deleteUser(int userId, Runnable onSuccess) {
         Executors.newSingleThreadExecutor().execute(() -> {
-            try {
-                userDao.deleteUser(userId);
-                operationStatus.postValue("User deleted successfully");
-            } catch (Exception e) {
-                operationStatus.postValue("Error deleting user: " + e.getMessage());
-            }
+            userDao.deleteUser(userId);
+            ((MutableLiveData<String>) operationStatus).postValue("User deleted");
+
+            // Run the callback on the main thread
+            new Handler(Looper.getMainLooper()).post(onSuccess);
         });
     }
 

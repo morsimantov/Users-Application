@@ -11,22 +11,22 @@ import com.example.myusersapplication.models.User;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
 
 public class UsersViewModel extends ViewModel {
 
+    public static final int PAGE_SIZE = 6;
     private UsersRepository usersRepository;
     private MutableLiveData<List<User>> usersLiveData = new MutableLiveData<>();
     private LiveData<String> operationStatus;
-    public static final int PAGE_SIZE = 6;
 
     public UsersViewModel(@NonNull Application application) {
         super();
         usersRepository = new UsersRepository(application.getApplicationContext());
 
-        // Initialize usersLiveData
-        usersLiveData.postValue(usersRepository.getUsersWithPaging(PAGE_SIZE, 0).getValue());
         // Initialize operationStatus
         operationStatus = usersRepository.getOperationStatus();
+        loadNextPage(0);
     }
 
     // Getter for usersLiveData
@@ -58,13 +58,27 @@ public class UsersViewModel extends ViewModel {
                 });
     }
 
-
     public void insertUser(String email, String firstName, String lastName, String avatar) {
         usersRepository.insertUser(email, firstName, lastName, avatar);
     }
 
     public void deleteUser(int userId) {
-        usersRepository.deleteUser(userId);
+        // Delete the user from the repository
+        usersRepository.deleteUser(userId, () -> {
+            // Get the current list of users
+            List<User> currentUsers = usersLiveData.getValue();
+            if (currentUsers != null) {
+                // Find the user to delete by ID and remove them from the list
+                for (int i = 0; i < currentUsers.size(); i++) {
+                    if (currentUsers.get(i).getId() == userId) {
+                        currentUsers.remove(i);
+                        break;
+                    }
+                }
+                // Update the LiveData with the new list
+                usersLiveData.postValue(currentUsers);
+            }
+        });
     }
 
     public void updateUser(int id, String email, String firstName, String lastName, String avatar) {

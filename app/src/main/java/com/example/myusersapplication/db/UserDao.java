@@ -29,6 +29,9 @@ public interface UserDao {
     @Query("SELECT * FROM user LIMIT :limit OFFSET :offset")
     LiveData<List<User>> getUsersWithPaging(int limit, int offset);
 
+    @Query("SELECT * FROM User ORDER BY id LIMIT :limit OFFSET :offset")
+    List<User> getUsersWithPagingSync(int limit, int offset);
+
     @Query("SELECT * FROM user WHERE id = :id")
     User getUserById(int id);
 
