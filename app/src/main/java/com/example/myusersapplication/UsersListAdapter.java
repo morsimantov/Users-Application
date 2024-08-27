@@ -1,5 +1,6 @@
 package com.example.myusersapplication;
 
+import android.app.ActivityOptions;
 import android.app.Application;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -66,17 +67,6 @@ public class UsersListAdapter extends RecyclerView.Adapter<UsersViewHolder> {
             holder.avatarImg.setImageResource(R.drawable.not_available);
         }
 
-
-        holder.cardView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int adapterPosition = holder.getAdapterPosition();
-                if (adapterPosition != RecyclerView.NO_POSITION) {
-//                    listener.onSelectUser(usersList.get(adapterPosition));
-                }
-            }
-        });
-
         // Handle edit button click
         holder.editButton.setOnClickListener(v -> {
             EditUserFragment editUserFragment = EditUserFragment.newInstance(user);
@@ -117,15 +107,18 @@ public class UsersListAdapter extends RecyclerView.Adapter<UsersViewHolder> {
                     // Pass the selected user's details to the UserDetailsActivity
                     intent.putExtra("user", selectedUser);
 
+                    // Set up the transition for shared elements
+                    // Set up the transition for shared elements
+                    ActivityOptions options = ActivityOptions
+                            .makeSceneTransitionAnimation(activity, holder.avatarImg, "transition_img");
+
                     // Start the UserDetailsActivity
-                    activity.startActivity(intent);
+                    activity.startActivity(intent, options.toBundle());
                 }
             }
         });
 
     }
-
-
 
     @Override
     public int getItemCount() {
