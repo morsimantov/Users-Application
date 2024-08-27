@@ -11,7 +11,6 @@ import com.example.myusersapplication.models.User;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executors;
 
 public class UsersViewModel extends ViewModel {
 

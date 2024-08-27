@@ -1,15 +1,12 @@
 package com.example.myusersapplication.mvvm;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
-import androidx.recyclerview.widget.AsyncListUtil;
 
 import com.example.myusersapplication.api.RetrofitClient;
 import com.example.myusersapplication.db.AppDatabase;
@@ -32,6 +29,11 @@ public class UsersRepository {
     public UsersRepository(Context context) {
         AppDatabase db = AppDatabase.getDatabase(context);
         this.userDao = db.userDao();
+    }
+
+    // Method to get the operation status
+    public LiveData<String> getOperationStatus() {
+        return operationStatus;
     }
 
     // Method to get users with paging
@@ -74,11 +76,6 @@ public class UsersRepository {
                 operationStatus.postValue("Error fetching users from API: " + t.getMessage());
             }
         });
-    }
-
-    // Method to get the operation status
-    public LiveData<String> getOperationStatus() {
-        return operationStatus;
     }
 
     // Method to insert a user

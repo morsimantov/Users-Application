@@ -2,7 +2,6 @@ package com.example.myusersapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.transition.TransitionInflater;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;

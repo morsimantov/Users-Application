@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".SplashScreen"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="120dp"
+        android:src="@drawable/users_logo"
+        android:transitionName="logo_image"
+        android:layout_gravity="center_horizontal"/>
+
+    <ImageView
+        android:id="@+id/title"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="290dp"
+        android:layout_height="wrap_content"
+        android:src="@drawable/title_app2"
+        android:transitionName="logo_text" />
+
+    <TextView
+        android:id="@+id/text_by"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:fontFamily="@font/delius_unicase"
+        android:text="By Mor Siman Tov"
+        android:textAlignment="center"
+        android:textColor="#744CC7"
+        android:textSize="18sp" />
+
+</LinearLayout>
