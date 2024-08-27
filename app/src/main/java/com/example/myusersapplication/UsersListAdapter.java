@@ -2,6 +2,7 @@ package com.example.myusersapplication;
 
 import android.app.Application;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -101,7 +102,30 @@ public class UsersListAdapter extends RecyclerView.Adapter<UsersViewHolder> {
                     })
                     .show();
         });
+
+        holder.cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int adapterPosition = holder.getAdapterPosition();
+                if (adapterPosition != RecyclerView.NO_POSITION) {
+                    // Get the selected user
+                    User selectedUser = usersList.get(adapterPosition);
+
+                    // Create an Intent to start UserDetailsActivity
+                    Intent intent = new Intent(activity, UserDetailsActivity.class);
+
+                    // Pass the selected user's details to the UserDetailsActivity
+                    intent.putExtra("user", selectedUser);
+
+                    // Start the UserDetailsActivity
+                    activity.startActivity(intent);
+                }
+            }
+        });
+
     }
+
+
 
     @Override
     public int getItemCount() {

@@ -29,10 +29,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:fontFamily="@font/delius_unicase"
+        android:fontFamily="@font/poppins"
         android:text="By Mor Siman Tov"
         android:textAlignment="center"
         android:textColor="#744CC7"
-        android:textSize="18sp" />
+        android:textSize="20sp" />
 
 </LinearLayout>
