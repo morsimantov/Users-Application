@@ -1,5 +1,7 @@
 package com.example.myusersapplication;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.ActivityOptions;
 import android.app.Application;
 import android.content.DialogInterface;
@@ -8,6 +10,7 @@ import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewPropertyAnimator;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
@@ -79,8 +82,20 @@ public class UsersListAdapter extends RecyclerView.Adapter<UsersViewHolder> {
                     .setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            // Call the deleteUser method from the ViewModel
-                            usersViewModel.deleteUser(user.getId());
+                            // Start the fade-out animation
+                            ViewPropertyAnimator animator = holder.itemView.animate();
+                            animator.alpha(0f).setDuration(200).setListener(new AnimatorListenerAdapter() {
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+                                    // Remove the user from the list and notify the adapter
+                                    int position = holder.getAdapterPosition();
+                                    usersList.remove(position);
+                                    notifyItemRemoved(position);
+                                    notifyItemRangeChanged(position, usersList.size());
+                                    // Call the deleteUser method from the ViewModel
+                                    usersViewModel.deleteUser(user.getId());
+                                }
+                            }).start();
                         }
                     })
                     .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
