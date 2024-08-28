@@ -29,6 +29,7 @@ public class EditUserFragment extends DialogFragment {
 
     private static final String ARG_USER = "user";
     private UsersViewModel usersViewModel;
+    private UsersListAdapter adapter;
 
     private TextInputEditText firstNameInput;
     private TextInputEditText lastNameInput;
@@ -37,12 +38,17 @@ public class EditUserFragment extends DialogFragment {
 
     private String avatarFilePath;
 
-    public static EditUserFragment newInstance(User user ) {
+    public static EditUserFragment newInstance(User user, UsersListAdapter adapter) {
         EditUserFragment fragment = new EditUserFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_USER, user); // Pass the full user object
         fragment.setArguments(args);
+        fragment.setAdapter(adapter);  // Set the adapter
         return fragment;
+    }
+
+    public void setAdapter(UsersListAdapter adapter) {
+        this.adapter = adapter;
     }
 
     @Nullable
@@ -112,6 +118,9 @@ public class EditUserFragment extends DialogFragment {
                     // Show Snackbar message using the root view of the fragment
                     Snackbar.make(view, result, Snackbar.LENGTH_SHORT).show();
                     if (result.equals("User updated successfully")) {
+                        if (adapter != null) {
+                            adapter.notifyDataSetChanged();  // Notify the adapter of changes
+                        }
                         dismiss(); // Close the dialog on success
                     }
                 }

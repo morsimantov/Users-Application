@@ -39,7 +39,6 @@ public class UsersListAdapter extends RecyclerView.Adapter<UsersViewHolder> {
         // Use the Application context to create the UsersViewModelFactory
         UsersViewModelFactory factory = new UsersViewModelFactory(application);
         usersViewModel = new ViewModelProvider(activity, factory).get(UsersViewModel.class);
-//        this.listener = listener;
     }
 
     @NonNull
@@ -72,7 +71,7 @@ public class UsersListAdapter extends RecyclerView.Adapter<UsersViewHolder> {
 
         // Handle edit button click
         holder.editButton.setOnClickListener(v -> {
-            EditUserFragment editUserFragment = EditUserFragment.newInstance(user);
+            EditUserFragment editUserFragment = EditUserFragment.newInstance(user, UsersListAdapter.this);
             editUserFragment.show(activity.getSupportFragmentManager(), "editUserFragment");
         });
 
@@ -132,7 +131,6 @@ public class UsersListAdapter extends RecyclerView.Adapter<UsersViewHolder> {
                 }
             }
         });
-
     }
 
     @Override
