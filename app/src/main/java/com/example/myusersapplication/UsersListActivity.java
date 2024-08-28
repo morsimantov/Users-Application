@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -34,6 +35,9 @@ public class UsersListActivity extends AppCompatActivity {
     private UsersListAdapter adapter;
     private List<User> usersList;
     private FloatingActionButton addUserButton;
+    private ProgressBar progressBar;
+    private RecyclerView recycler;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,12 +45,15 @@ public class UsersListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_users_list);
 
-        RecyclerView recycler = findViewById(R.id.users_recycler);
+        recycler = findViewById(R.id.users_recycler);
         addUserButton = findViewById(R.id.add_user_button);
 
         recycler.setLayoutManager(new GridLayoutManager(this, 1));
         adapter = new UsersListAdapter(usersList, this, getApplication());
         recycler.setAdapter(adapter);
+
+        progressBar = findViewById(R.id.progress_circular);
+
 
         addUserButton.setOnClickListener(v -> {
             Intent intent = new Intent(UsersListActivity.this, AddUserActivity.class);
@@ -69,6 +76,10 @@ public class UsersListActivity extends AppCompatActivity {
                     usersList = users;
                     adapter.updateList(usersList);  // Update the adapter's list
                     adapter.notifyDataSetChanged(); // Notify the adapter that the data has changed
+
+                    // Hide ProgressBar and show RecyclerView
+                    progressBar.setVisibility(View.GONE);
+                    recycler.setVisibility(View.VISIBLE);
                 }
             }
         });
