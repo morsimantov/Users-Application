@@ -22,7 +22,7 @@
         android:layout_width="290dp"
         android:layout_height="wrap_content"
         android:src="@drawable/title_app"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="30dp"
         android:transitionName="logo_text" />
 
     <TextView

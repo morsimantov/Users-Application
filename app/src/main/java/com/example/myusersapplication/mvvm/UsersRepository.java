@@ -53,7 +53,7 @@ public class UsersRepository {
             List<User> usersFromDb = userDao.getUsersWithPagingSync(limit, offset);
             if (usersFromDb != null && !usersFromDb.isEmpty()) {
                 data.postValue(usersFromDb);
-            } else {
+            } else if (offset % 6 == 0){
                 int page_number = offset / limit + 1;
                 fetchUsersFromApi(page_number, data); // Pass MutableLiveData to update it with fetched data
                 Log.d(null, "fetching from API page number: " + page_number);

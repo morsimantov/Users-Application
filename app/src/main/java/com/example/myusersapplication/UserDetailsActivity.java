@@ -7,9 +7,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -64,19 +67,11 @@ public class UserDetailsActivity extends AppCompatActivity {
             avatarImg.setImageResource(R.drawable.not_available);
         }
 
+        // calling the action bar
+        ActionBar actionBar = getSupportActionBar();
 
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(android.view.MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.delete_user:
-                // Handle the delete user action
-                deleteUser();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+        // showing the back button in action bar
+        actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     private void deleteUser() {
@@ -114,4 +109,18 @@ public class UserDetailsActivity extends AppCompatActivity {
         return true;
     }
 
+    // this event will enable the back function to the button on press
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.delete_user:
+                // Handle the delete user action
+                deleteUser();
+                return true;
+            case android.R.id.home:
+                this.finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }
