@@ -1,9 +1,12 @@
 package com.example.myusersapplication;
 
+import android.app.Activity;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.Window;
-import android.view.WindowManager;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -13,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.myusersapplication.models.User;
 import com.example.myusersapplication.mvvm.UsersViewModel;
 import com.example.myusersapplication.mvvm.UsersViewModelFactory;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.squareup.picasso.Picasso;
 
 public class UserDetailsActivity extends AppCompatActivity {
@@ -61,6 +65,53 @@ public class UserDetailsActivity extends AppCompatActivity {
         }
 
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(android.view.MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.delete_user:
+                // Handle the delete user action
+                deleteUser();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void deleteUser() {
+        new MaterialAlertDialogBuilder(this)
+                .setMessage("Are you sure you want to delete?")
+                .setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        // Call the deleteUser method from the ViewModel
+                        usersViewModel.deleteUser(user.getId());
+
+                        // Set the result to indicate a user has been deleted
+                        Intent returnIntent = new Intent();
+                        returnIntent.putExtra("isDeleted", true);
+                        setResult(Activity.RESULT_OK, returnIntent);
+
+                        // Finish the activity and return to the previous one
+                        finish();
+                    }
+                })
+                .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        // Close the dialog without doing anything
+                        dialogInterface.dismiss();
+                    }
+                })
+                .show();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.more_vertical, menu);
+        return true;
     }
 
 }

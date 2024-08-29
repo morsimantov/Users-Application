@@ -3,22 +3,15 @@ package com.example.myusersapplication;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityOptionsCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myusersapplication.models.User;
@@ -27,6 +20,7 @@ import com.example.myusersapplication.mvvm.UsersViewModelFactory;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class UsersListActivity extends AppCompatActivity {
@@ -38,7 +32,6 @@ public class UsersListActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private RecyclerView recycler;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -49,11 +42,23 @@ public class UsersListActivity extends AppCompatActivity {
         addUserButton = findViewById(R.id.add_user_button);
 
         recycler.setLayoutManager(new GridLayoutManager(this, 1));
-        adapter = new UsersListAdapter(usersList, this, getApplication());
+        // Initialize the adapter
+        adapter = new UsersListAdapter(new ArrayList<>(), this, getApplication(), new UserActionListener() {
+            @Override
+            public void onEditUser(User user) {
+                EditUserFragment editUserFragment = EditUserFragment.newInstance(user, adapter);
+                editUserFragment.show(getSupportFragmentManager(), "editUserFragment");
+            }
+
+            @Override
+            public void onDeleteUser(User user) {
+                usersViewModel.deleteUser(user.getId());
+            }
+        });
+
         recycler.setAdapter(adapter);
 
         progressBar = findViewById(R.id.progress_circular);
-
 
         addUserButton.setOnClickListener(v -> {
             Intent intent = new Intent(UsersListActivity.this, AddUserActivity.class);
@@ -92,6 +97,7 @@ public class UsersListActivity extends AppCompatActivity {
             @Override
             public void onChanged(String statusMessage) {
                 if (statusMessage != null && !statusMessage.isEmpty()) {
+                    adapter.notifyDataSetChanged();
                     // Show a message to the user
                     Snackbar.make(findViewById(android.R.id.content), statusMessage, Snackbar.LENGTH_SHORT).show();
                 }
@@ -118,5 +124,6 @@ public class UsersListActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         adapter.notifyDataSetChanged();
+        Log.d(null, "On resume");
     }
 }

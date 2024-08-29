@@ -36,6 +36,16 @@ public class UsersRepository {
         return operationStatus;
     }
 
+    // Method to get all users on a background thread
+    public LiveData<List<User>> getAllUsers() {
+        MutableLiveData<List<User>> data = new MutableLiveData<>();
+        Executors.newSingleThreadExecutor().execute(() -> {
+            List<User> users = userDao.getAllUsers();
+            data.postValue(users);
+        });
+        return data;
+    }
+
     // Method to get users with paging
     public LiveData<List<User>> getUsersWithPaging(int limit, int offset) {
         MutableLiveData<List<User>> data = new MutableLiveData<>();

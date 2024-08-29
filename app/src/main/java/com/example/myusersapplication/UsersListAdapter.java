@@ -14,12 +14,9 @@ import android.view.ViewPropertyAnimator;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myusersapplication.models.User;
-import com.example.myusersapplication.mvvm.UsersViewModel;
-import com.example.myusersapplication.mvvm.UsersViewModelFactory;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.squareup.picasso.Picasso;
 
@@ -28,17 +25,13 @@ import java.util.List;
 public class UsersListAdapter extends RecyclerView.Adapter<UsersViewHolder> {
 
     private List<User> usersList;
-    //    private SelectUserListener listener;
     private final FragmentActivity activity;  // Use FragmentActivity for access to FragmentManager
-    private UsersViewModel usersViewModel;
+    private final UserActionListener actionListener;
 
-
-    public UsersListAdapter(List<User> usersList, FragmentActivity activity, Application application) {
+    public UsersListAdapter(List<User> usersList, FragmentActivity activity, Application application, UserActionListener actionListener) {
         this.usersList = usersList;
         this.activity = activity;
-        // Use the Application context to create the UsersViewModelFactory
-        UsersViewModelFactory factory = new UsersViewModelFactory(application);
-        usersViewModel = new ViewModelProvider(activity, factory).get(UsersViewModel.class);
+        this.actionListener = actionListener;
     }
 
     @NonNull
@@ -70,9 +63,11 @@ public class UsersListAdapter extends RecyclerView.Adapter<UsersViewHolder> {
         }
 
         // Handle edit button click
+        // Handle edit button click
         holder.editButton.setOnClickListener(v -> {
-            EditUserFragment editUserFragment = EditUserFragment.newInstance(user, UsersListAdapter.this);
-            editUserFragment.show(activity.getSupportFragmentManager(), "editUserFragment");
+            if (actionListener != null) {
+                actionListener.onEditUser(user);
+            }
         });
 
         holder.deleteButton.setOnClickListener(v -> {
@@ -83,7 +78,7 @@ public class UsersListAdapter extends RecyclerView.Adapter<UsersViewHolder> {
                         public void onClick(DialogInterface dialogInterface, int i) {
                             // Start the fade-out animation
                             ViewPropertyAnimator animator = holder.itemView.animate();
-                            animator.alpha(0f).setDuration(200).setListener(new AnimatorListenerAdapter() {
+                            animator.alpha(0f).setDuration(170).setListener(new AnimatorListenerAdapter() {
                                 @Override
                                 public void onAnimationEnd(Animator animation) {
                                     // Remove the user from the list and notify the adapter
@@ -91,8 +86,9 @@ public class UsersListAdapter extends RecyclerView.Adapter<UsersViewHolder> {
                                     usersList.remove(position);
                                     notifyItemRemoved(position);
                                     notifyItemRangeChanged(position, usersList.size());
-                                    // Call the deleteUser method from the ViewModel
-                                    usersViewModel.deleteUser(user.getId());
+                                    if (actionListener != null) {
+                                        actionListener.onDeleteUser(user);
+                                    }
                                 }
                             }).start();
                         }
@@ -106,6 +102,7 @@ public class UsersListAdapter extends RecyclerView.Adapter<UsersViewHolder> {
                     })
                     .show();
         });
+
 
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -142,7 +139,7 @@ public class UsersListAdapter extends RecyclerView.Adapter<UsersViewHolder> {
     }
 
     public void updateList(List<User> users) {
-        usersList = users;
+        this.usersList = users;
         notifyDataSetChanged();
     }
 }
