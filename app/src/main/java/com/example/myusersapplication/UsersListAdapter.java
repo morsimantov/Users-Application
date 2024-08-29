@@ -63,7 +63,6 @@ public class UsersListAdapter extends RecyclerView.Adapter<UsersViewHolder> {
         }
 
         // Handle edit button click
-        // Handle edit button click
         holder.editButton.setOnClickListener(v -> {
             if (actionListener != null) {
                 actionListener.onEditUser(user);
@@ -85,7 +84,6 @@ public class UsersListAdapter extends RecyclerView.Adapter<UsersViewHolder> {
                                     int position = holder.getAdapterPosition();
                                     usersList.remove(position);
                                     notifyItemRemoved(position);
-                                    notifyItemRangeChanged(position, usersList.size());
                                     if (actionListener != null) {
                                         actionListener.onDeleteUser(user);
                                     }

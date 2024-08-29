@@ -63,21 +63,7 @@ public class UsersViewModel extends ViewModel {
 
     public void deleteUser(int userId) {
         // Delete the user from the repository
-        usersRepository.deleteUser(userId, () -> {
-            // Get the current list of users
-            List<User> currentUsers = usersLiveData.getValue();
-            if (currentUsers != null) {
-                // Find the user to delete by ID and remove them from the list
-                for (int i = 0; i < currentUsers.size(); i++) {
-                    if (currentUsers.get(i).getId() == userId) {
-                        currentUsers.remove(i);
-                        break;
-                    }
-                }
-                // Update the LiveData with the new list
-                usersLiveData.postValue(currentUsers);
-            }
-        });
+        usersRepository.deleteUser(userId);
     }
 
     public void updateUser(int id, String email, String firstName, String lastName, String avatar) {

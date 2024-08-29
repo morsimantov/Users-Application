@@ -108,14 +108,15 @@ public class UsersRepository {
         });
     }
 
-    // New method for deleting a user with a callback
-    public void deleteUser(int userId, Runnable onSuccess) {
+    // method for deleting a user with a callback
+    public void deleteUser(int userId) {
         Executors.newSingleThreadExecutor().execute(() -> {
-            userDao.deleteUser(userId);
-            ((MutableLiveData<String>) operationStatus).postValue("User deleted");
-
-            // Run the callback on the main thread
-            new Handler(Looper.getMainLooper()).post(onSuccess);
+            try {
+                userDao.deleteUser(userId);
+                operationStatus.postValue("User deleted");
+            } catch (Exception e) {
+                operationStatus.postValue("Error deleting user: " + e.getMessage());
+            }
         });
     }
 
