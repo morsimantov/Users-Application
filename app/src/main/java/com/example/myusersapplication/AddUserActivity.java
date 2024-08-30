@@ -1,11 +1,14 @@
 package com.example.myusersapplication;
 
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -40,7 +43,8 @@ public class AddUserActivity extends AppCompatActivity {
         firstNameInput = findViewById(R.id.first_name);
         lastNameInput = findViewById(R.id.last_name);
         emailInput = findViewById(R.id.email);
-        Button avatarButton = findViewById(R.id.uploadButton);
+        Button uploadButton = findViewById(R.id.upload_button);
+
         Button saveButton = findViewById(R.id.saveButton);
         Button cancelButton = findViewById(R.id.cancelButton);
         avatarImageView = findViewById(R.id.input_avatar);
@@ -48,8 +52,14 @@ public class AddUserActivity extends AppCompatActivity {
         UsersViewModelFactory factory = new UsersViewModelFactory(getApplication());
         usersViewModel = new ViewModelProvider(this, factory).get(UsersViewModel.class);
 
+
+        // Define the click listener to open the image chooser
+        View.OnClickListener openImageChooserListener = v -> ImageUtils.openImageChooser(AddUserActivity.this);
         // Trigger image picker
-        avatarButton.setOnClickListener(v -> ImageUtils.openImageChooser(this));
+        // Set the same click listener for both the button and the image view
+        uploadButton.setOnClickListener(openImageChooserListener);
+        avatarImageView.setOnClickListener(openImageChooserListener);
+        addClickAnimation(avatarImageView);
 
         // calling the action bar
         ActionBar actionBar = getSupportActionBar();
@@ -123,5 +133,21 @@ public class AddUserActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void addClickAnimation(View view) {
+        view.setOnClickListener(v -> {
+            ObjectAnimator scaleX = ObjectAnimator.ofFloat(v, "scaleX", 1.0f, 0.9f, 1.0f);
+            ObjectAnimator scaleY = ObjectAnimator.ofFloat(v, "scaleY", 1.0f, 0.9f, 1.0f);
+            scaleX.setDuration(200);
+            scaleY.setDuration(200);
+            scaleX.setInterpolator(new AccelerateDecelerateInterpolator());
+            scaleY.setInterpolator(new AccelerateDecelerateInterpolator());
+            scaleX.start();
+            scaleY.start();
+
+            // Trigger image chooser
+            ImageUtils.openImageChooser(AddUserActivity.this);
+        });
     }
 }

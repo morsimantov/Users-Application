@@ -6,7 +6,6 @@
     android:padding="24dp"
     android:transitionName="transition_fab">
 
-
     <!-- Title -->
     <TextView
         android:id="@+id/form_title"
@@ -70,15 +69,14 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Avatar Upload Section -->
-    <LinearLayout
+    <FrameLayout
         android:id="@+id/avatar_upload_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:layout_height="190dp"
         android:layout_marginTop="20dp"
-        android:layout_below="@id/outlined_email"
-        android:gravity="start">
+        android:layout_below="@id/outlined_email">
 
+        <!-- Avatar Image -->
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/input_avatar"
             android:layout_width="157dp"
@@ -86,16 +84,22 @@
             android:src="@drawable/upload"
             android:contentDescription="Avatar Image"
             app:shapeAppearanceOverlay="@style/CircularImageView"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerCrop"
+            android:clickable="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:background="@drawable/ripple_effect"/>
 
+        <!-- Upload Button -->
         <Button
-            android:id="@+id/uploadButton"
+            android:id="@+id/upload_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/purple_500"
             android:text="UPLOAD AVATAR"
-            android:textColor="@android:color/white" />
-    </LinearLayout>
+            android:textColor="@android:color/white"
+            android:layout_gravity="bottom" />
+    </FrameLayout>
 
     <!-- Save and Cancel Buttons -->
     <LinearLayout
