@@ -105,17 +105,17 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/avatar_upload_layout"
+        android:layout_alignParentBottom="true"
         android:layout_marginTop="18dp"
         android:gravity="end"
         android:orientation="horizontal">
 
         <Button
             android:id="@+id/cancelButton"
-            style="@style/Widget.AppCompat.Button.Borderless"
+            style="?attr/materialButtonOutlinedStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="4dp"
+            android:layout_marginEnd="10dp"
             android:text="CANCEL"
             android:textColor="@color/purple_500" />
 
@@ -127,5 +127,6 @@
             android:text="SAVE"
             android:textColor="@android:color/white" />
     </LinearLayout>
+
 
 </RelativeLayout>

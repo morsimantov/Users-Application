@@ -52,14 +52,14 @@ public class AddUserActivity extends AppCompatActivity {
         UsersViewModelFactory factory = new UsersViewModelFactory(getApplication());
         usersViewModel = new ViewModelProvider(this, factory).get(UsersViewModel.class);
 
-
         // Define the click listener to open the image chooser
         View.OnClickListener openImageChooserListener = v -> ImageUtils.openImageChooser(AddUserActivity.this);
+
+        addClickAnimation(avatarImageView);
+
         // Trigger image picker
         // Set the same click listener for both the button and the image view
         uploadButton.setOnClickListener(openImageChooserListener);
-        avatarImageView.setOnClickListener(openImageChooserListener);
-        addClickAnimation(avatarImageView);
 
         // calling the action bar
         ActionBar actionBar = getSupportActionBar();
@@ -75,10 +75,7 @@ public class AddUserActivity extends AppCompatActivity {
                     // Show a message to the user
                     // Log result to verify
                     Log.d("AddUserActivity", "Operation Status: " + statusMessage);
-
-                    // Show Snackbar message
-                    Snackbar.make(findViewById(android.R.id.content), statusMessage, Snackbar.LENGTH_SHORT).show(); // Changed to a specific view ID
-
+                    Snackbar.make(findViewById(android.R.id.content), statusMessage, Snackbar.LENGTH_SHORT).show();
                     // Finish the activity on success
                     if (statusMessage.equals("User created successfully")) {
                         finish();
@@ -137,17 +134,11 @@ public class AddUserActivity extends AppCompatActivity {
 
     private void addClickAnimation(View view) {
         view.setOnClickListener(v -> {
-            ObjectAnimator scaleX = ObjectAnimator.ofFloat(v, "scaleX", 1.0f, 0.9f, 1.0f);
-            ObjectAnimator scaleY = ObjectAnimator.ofFloat(v, "scaleY", 1.0f, 0.9f, 1.0f);
-            scaleX.setDuration(200);
-            scaleY.setDuration(200);
-            scaleX.setInterpolator(new AccelerateDecelerateInterpolator());
-            scaleY.setInterpolator(new AccelerateDecelerateInterpolator());
-            scaleX.start();
-            scaleY.start();
-
-            // Trigger image chooser
-            ImageUtils.openImageChooser(AddUserActivity.this);
+            // Simple click animation
+            view.animate().scaleX(0.9f).scaleY(0.9f).setDuration(200).withEndAction(() -> {
+                view.animate().scaleX(1.0f).scaleY(1.0f).setDuration(200).start();
+                ImageUtils.openImageChooser(AddUserActivity.this);
+            }).start();
         });
     }
 }

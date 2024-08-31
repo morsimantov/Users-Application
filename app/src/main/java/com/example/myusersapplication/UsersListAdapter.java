@@ -77,7 +77,7 @@ public class UsersListAdapter extends RecyclerView.Adapter<UsersViewHolder> {
                         public void onClick(DialogInterface dialogInterface, int i) {
                             // Start the fade-out animation
                             ViewPropertyAnimator animator = holder.itemView.animate();
-                            animator.alpha(0f).setDuration(170).setListener(new AnimatorListenerAdapter() {
+                            animator.alpha(0f).setDuration(200).setListener(new AnimatorListenerAdapter() {
                                 @Override
                                 public void onAnimationEnd(Animator animation) {
                                     // Remove the user from the list and notify the adapter

@@ -123,7 +123,10 @@ public class UsersListActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        adapter.notifyDataSetChanged();
         Log.d(null, "On resume");
+        int offset = adapter.getItemCount();
+        Log.d(null, "offset is: " + offset);
+        usersViewModel.loadNextPage(offset);
+        adapter.notifyDataSetChanged();
     }
 }

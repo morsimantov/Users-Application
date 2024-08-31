@@ -81,10 +81,10 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Avatar Upload -->
-    <LinearLayout
+    <FrameLayout
         android:id="@+id/avatar_upload_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="100dp"
         android:orientation="horizontal"
         android:layout_marginTop="16dp"
         android:layout_below="@id/outlined_email">
@@ -105,33 +105,36 @@
                 android:src="@drawable/not_available"/>
         </androidx.cardview.widget.CardView>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/button_upload_avatar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Upload Avatar"
-            android:textSize="12sp"
-            android:textColor="@color/purple_700"
+            android:text="Upload Image"
+            android:textSize="14sp"
             android:layout_gravity="bottom"
-            android:layout_marginLeft="16dp"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
-    </LinearLayout>
+            style="@style/UnderlinedButton"
+            app:icon="@drawable/ic_baseline_upload_24"
+            app:iconGravity="textStart"
+            android:layout_marginLeft="80dp"
+             />
+    </FrameLayout>
+
 
     <!-- Save and Cancel Buttons -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/avatar_upload_layout"
-        android:layout_marginTop="18dp"
+        android:layout_marginTop="30dp"
         android:gravity="end"
         android:orientation="horizontal">
 
         <Button
             android:id="@+id/cancelButton"
-            style="@style/Widget.AppCompat.Button.Borderless"
+            style="?attr/materialButtonOutlinedStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="4dp"
+            android:layout_marginEnd="10dp"
             android:text="CANCEL"
             android:textColor="@color/purple_500" />
 

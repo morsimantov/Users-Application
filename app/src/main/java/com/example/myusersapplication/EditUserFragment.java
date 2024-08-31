@@ -114,9 +114,6 @@ public class EditUserFragment extends DialogFragment {
                 if (result != null) {
                     // Log result to verify
                     Log.d("EditUserFragment", "Operation Status: " + result);
-
-                    // Show Snackbar message using the root view of the fragment
-                    Snackbar.make(view, result, Snackbar.LENGTH_SHORT).show();
                     if (result.equals("User updated successfully")) {
                         if (adapter != null) {
                             adapter.notifyDataSetChanged();  // Notify the adapter of changes
