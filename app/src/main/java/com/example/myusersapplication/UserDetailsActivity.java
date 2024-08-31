@@ -8,24 +8,35 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myusersapplication.models.User;
 import com.example.myusersapplication.mvvm.UsersViewModel;
 import com.example.myusersapplication.mvvm.UsersViewModelFactory;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.squareup.picasso.Picasso;
 
 public class UserDetailsActivity extends AppCompatActivity {
 
+    private static final int EDIT_USER_REQUEST_CODE = 1; // Define a request code
+
     private UsersViewModel usersViewModel;
     private User user;
+    private FloatingActionButton editButton;
+    TextView nameTitle;
+    TextView firstName;
+    TextView lastName;
+    TextView email;
+    ImageView avatarImg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,11 +50,12 @@ public class UserDetailsActivity extends AppCompatActivity {
         UsersViewModelFactory factory = new UsersViewModelFactory(getApplication());
         usersViewModel = new ViewModelProvider(this, factory).get(UsersViewModel.class);
 
-        TextView nameTitle = findViewById(R.id.name_title);
-        TextView firstName = findViewById(R.id.first_name);
-        TextView lastName = findViewById(R.id.last_name);
-        TextView email = findViewById(R.id.email);
-        ImageView avatarImg = findViewById(R.id.avatar_img);
+        nameTitle = findViewById(R.id.name_title);
+        firstName = findViewById(R.id.first_name);
+        lastName = findViewById(R.id.last_name);
+        email = findViewById(R.id.email);
+        avatarImg = findViewById(R.id.avatar_img);
+        editButton = findViewById(R.id.edit_button);
 
         nameTitle.setText(user.getFirst_name() + " " + user.getLast_name());
         firstName.setText(user.getFirst_name());
@@ -51,6 +63,8 @@ public class UserDetailsActivity extends AppCompatActivity {
         email.setText(user.getEmail());
 
         String urlImg = user.getAvatar();
+
+        updateUI(user);
 
         // Check if urlImg is null or empty
         if (urlImg != null && !urlImg.isEmpty()) {
@@ -72,7 +86,50 @@ public class UserDetailsActivity extends AppCompatActivity {
 
         // showing the back button in action bar
         actionBar.setDisplayHomeAsUpEnabled(true);
+
+        editButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EditUserFragment editUserFragment = EditUserFragment.newInstance(user);
+                editUserFragment.show(getSupportFragmentManager(), "edit_user_fragment");
+            }
+        });
+
+        getSupportFragmentManager().setFragmentResultListener("edit_user_request", this, new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                if (result.containsKey("updated_user")) {
+                    User updatedUser = (User) result.getSerializable("updated_user");
+                    updateUI(updatedUser);
+                }
+            }
+        });
+
     }
+
+    private void updateUI(User user) {
+        if (user != null) {
+            nameTitle.setText(user.getFirst_name() + " " + user.getLast_name());
+            firstName.setText(user.getFirst_name());
+            lastName.setText(user.getLast_name());
+            email.setText(user.getEmail());
+
+            String urlImg = user.getAvatar();
+            if (urlImg != null && !urlImg.isEmpty()) {
+                if (urlImg.startsWith("https")) {
+                    Picasso.get()
+                            .load(urlImg)
+                            .placeholder(R.drawable.not_available)
+                            .into(avatarImg);
+                } else {
+                    avatarImg.setImageURI(Uri.parse(urlImg));
+                }
+            } else {
+                avatarImg.setImageResource(R.drawable.not_available);
+            }
+        }
+    }
+
 
     private void deleteUser() {
         new MaterialAlertDialogBuilder(this)

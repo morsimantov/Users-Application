@@ -1,5 +1,6 @@
 package com.example.myusersapplication;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -29,8 +30,6 @@ public class EditUserFragment extends DialogFragment {
 
     private static final String ARG_USER = "user";
     private UsersViewModel usersViewModel;
-    private UsersListAdapter adapter;
-
     private TextInputEditText firstNameInput;
     private TextInputEditText lastNameInput;
     private TextInputEditText emailInput;
@@ -38,17 +37,12 @@ public class EditUserFragment extends DialogFragment {
 
     private String avatarFilePath;
 
-    public static EditUserFragment newInstance(User user, UsersListAdapter adapter) {
+    public static EditUserFragment newInstance(User user) {
         EditUserFragment fragment = new EditUserFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_USER, user); // Pass the full user object
         fragment.setArguments(args);
-        fragment.setAdapter(adapter);  // Set the adapter
         return fragment;
-    }
-
-    public void setAdapter(UsersListAdapter adapter) {
-        this.adapter = adapter;
     }
 
     @Nullable
@@ -116,25 +110,20 @@ public class EditUserFragment extends DialogFragment {
                     // Log result to verify
                     Log.d("EditUserFragment", "Operation Status: " + result);
                     if (result.equals("User updated successfully")) {
-                        if (adapter != null) {
-                            adapter.notifyDataSetChanged();  // Notify the adapter of changes
-                        }
                         dismiss(); // Close the dialog on success
                     }
                 }
             }
         });
 
-        // Handle save button
         Button saveButton = view.findViewById(R.id.saveButton);
+        // Handle save button
         saveButton.setOnClickListener(v -> {
-
             String firstName = firstNameInput != null ? firstNameInput.getText().toString().trim() : "";
             String lastName = lastNameInput != null ? lastNameInput.getText().toString().trim() : "";
             String email = emailInput != null ? emailInput.getText().toString().trim() : "";
 
             if (validateInputs()) {
-                // Update the user with new data
                 user.setFirst_name(firstName);
                 user.setLast_name(lastName);
                 user.setEmail(email);
@@ -142,6 +131,14 @@ public class EditUserFragment extends DialogFragment {
                     user.setAvatar(avatarFilePath);
                 }
                 usersViewModel.updateUser(user.getId(), email, firstName, lastName, user.getAvatar());
+
+                // Collect the updated user data and create a result bundle
+                Bundle result = new Bundle();
+                result.putSerializable("updated_user", user);
+
+                // Send the result to the activity
+                getParentFragmentManager().setFragmentResult("edit_user_request", result);
+                dismiss(); // Close the dialog on success
             }
         });
 

@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -53,7 +54,7 @@ public class UsersListActivity extends AppCompatActivity {
         adapter = new UsersListAdapter(new ArrayList<>(), this, getApplication(), new UserActionListener() {
             @Override
             public void onEditUser(User user) {
-                EditUserFragment editUserFragment = EditUserFragment.newInstance(user, adapter);
+                EditUserFragment editUserFragment = EditUserFragment.newInstance(user);
                 editUserFragment.show(getSupportFragmentManager(), "editUserFragment");
             }
 
@@ -94,7 +95,7 @@ public class UsersListActivity extends AppCompatActivity {
                     recycler.setVisibility(View.VISIBLE);
                     noDataImage.setVisibility(View.GONE);
                     noDataText.setVisibility(View.GONE);
-                } else {
+                } else if (users.isEmpty()) {
                     // No users found: show the no data views and hide the RecyclerView
                     recycler.setVisibility(View.GONE);
                     noDataImage.setVisibility(View.VISIBLE);
@@ -114,6 +115,7 @@ public class UsersListActivity extends AppCompatActivity {
             @Override
             public void onChanged(String statusMessage) {
                 if (statusMessage != null && !statusMessage.isEmpty()) {
+                    usersViewModel.refreshUsers();
                     adapter.notifyDataSetChanged();
                     // Show a message to the user
                     Snackbar.make(findViewById(android.R.id.content), statusMessage, Snackbar.LENGTH_SHORT).show();
@@ -132,6 +134,15 @@ public class UsersListActivity extends AppCompatActivity {
                     int offset = adapter.getItemCount();
                     Log.d(null, "offset is: " + offset);
                     usersViewModel.loadNextPage(offset);
+                }
+            }
+        });
+
+        getSupportFragmentManager().setFragmentResultListener("edit_user_request", this, new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                if (result.containsKey("updated_user")) {
+                    adapter.notifyDataSetChanged();
                 }
             }
         });
