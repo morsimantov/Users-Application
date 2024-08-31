@@ -57,6 +57,12 @@ public class UsersViewModel extends ViewModel {
                 });
     }
 
+    public void refreshUsers() {
+        usersRepository.getAllUsers().observeForever(users -> {
+            usersLiveData.postValue(users);
+        });
+    }
+
     public void insertUser(String email, String firstName, String lastName, String avatar) {
         usersRepository.insertUser(email, firstName, lastName, avatar);
     }
@@ -64,6 +70,7 @@ public class UsersViewModel extends ViewModel {
     public void deleteUser(int userId) {
         // Delete the user from the repository
         usersRepository.deleteUser(userId);
+        refreshUsers();
     }
 
     public void updateUser(int id, String email, String firstName, String lastName, String avatar) {

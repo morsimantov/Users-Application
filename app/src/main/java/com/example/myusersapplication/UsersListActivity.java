@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,6 +33,9 @@ public class UsersListActivity extends AppCompatActivity {
     private FloatingActionButton addUserButton;
     private ProgressBar progressBar;
     private RecyclerView recycler;
+    private ImageView noDataImage;
+    private TextView noDataText;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +45,8 @@ public class UsersListActivity extends AppCompatActivity {
 
         recycler = findViewById(R.id.users_recycler);
         addUserButton = findViewById(R.id.add_user_button);
+        noDataImage = findViewById(R.id.empty_imageview);
+        noDataText = findViewById(R.id.no_data);
 
         recycler.setLayoutManager(new GridLayoutManager(this, 1));
         // Initialize the adapter
@@ -77,15 +84,25 @@ public class UsersListActivity extends AppCompatActivity {
         usersViewModel.getUsersLiveData().observe(this, new Observer<List<User>>() {
             @Override
             public void onChanged(List<User> users) {
-                if (users != null) {
+                if (users != null && !users.isEmpty()) {
+                    // Users found: update the list and show the RecyclerView
                     usersList = users;
-                    adapter.updateList(usersList);  // Update the adapter's list
-                    adapter.notifyDataSetChanged(); // Notify the adapter that the data has changed
+                    adapter.updateList(usersList);
+                    adapter.notifyDataSetChanged();
 
-                    // Hide ProgressBar and show RecyclerView
-                    progressBar.setVisibility(View.GONE);
+                    // Show the RecyclerView and hide the no data views
                     recycler.setVisibility(View.VISIBLE);
+                    noDataImage.setVisibility(View.GONE);
+                    noDataText.setVisibility(View.GONE);
+                } else {
+                    // No users found: show the no data views and hide the RecyclerView
+                    recycler.setVisibility(View.GONE);
+                    noDataImage.setVisibility(View.VISIBLE);
+                    noDataText.setVisibility(View.VISIBLE);
                 }
+
+                // Hide ProgressBar regardless of the data state
+                progressBar.setVisibility(View.GONE);
             }
         });
 
@@ -123,10 +140,7 @@ public class UsersListActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(null, "On resume");
-        int offset = adapter.getItemCount();
-        Log.d(null, "offset is: " + offset);
-        usersViewModel.loadNextPage(offset);
+        usersViewModel.refreshUsers();
         adapter.notifyDataSetChanged();
     }
 }

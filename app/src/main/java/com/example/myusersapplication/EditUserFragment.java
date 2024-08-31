@@ -82,7 +82,8 @@ public class EditUserFragment extends DialogFragment {
         // Get the User object from the arguments
         User user = (User) getArguments().getSerializable(ARG_USER);
         // Trigger image picker
-        avatarUploadButton.setOnClickListener(v -> ImageUtils.openImageChooser(this));
+        addClickAnimation(avatarImageView);
+        addClickAnimation(avatarUploadButton);
 
         if (user != null) {
             // Populate the fields with user data
@@ -169,5 +170,15 @@ public class EditUserFragment extends DialogFragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         avatarFilePath = ImageUtils.handleImageChooserResult(requestCode, resultCode, data, avatarImageView, requireActivity());
+    }
+
+    private void addClickAnimation(View view) {
+        view.setOnClickListener(v -> {
+            // Simple click animation
+            view.animate().scaleX(0.9f).scaleY(0.9f).setDuration(200).withEndAction(() -> {
+                view.animate().scaleX(1.0f).scaleY(1.0f).setDuration(200).start();
+                ImageUtils.openImageChooser(EditUserFragment.this);
+            }).start();
+        });
     }
 }

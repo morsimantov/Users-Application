@@ -31,14 +31,6 @@
             android:layout_marginBottom="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginLeft="16dp"/>
-
-        <!-- Add Fragment Container Here -->
-        <FrameLayout
-            android:id="@+id/fragment_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp" />
-
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -58,6 +50,33 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:visibility="visible"
-        android:indeterminateTint="@color/purple_500"/> <!-- Show ProgressBar initially -->
+        android:indeterminateTint="@color/purple_500"/>
+    <!-- Show ProgressBar initially -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center">
+    <ImageView
+        android:id="@+id/empty_imageview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:alpha="0.1"
+        android:layout_gravity="center"
+        app:srcCompat="@drawable/ic_empty"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/no_data"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="No Data"
+        android:layout_gravity="center"
+        android:fontFamily="@font/poppins"
+        android:textSize="20sp"
+        android:alpha="0.4"
+        android:visibility="gone"/>
+    </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

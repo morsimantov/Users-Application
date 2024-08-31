@@ -102,7 +102,10 @@
                 android:layout_height="match_parent"
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop"
-                android:src="@drawable/not_available"/>
+                android:src="@drawable/not_available"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="@drawable/ripple_effect"/>
         </androidx.cardview.widget.CardView>
 
         <com.google.android.material.button.MaterialButton
