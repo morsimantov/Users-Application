@@ -79,8 +79,8 @@
         <!-- Avatar Image -->
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/input_avatar"
-            android:layout_width="157dp"
-            android:layout_height="157dp"
+            android:layout_width="158dp"
+            android:layout_height="158dp"
             android:src="@drawable/upload"
             android:contentDescription="Avatar Image"
             app:shapeAppearanceOverlay="@style/CircularImageView"
