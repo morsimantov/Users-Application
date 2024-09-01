@@ -41,15 +41,29 @@ Architecture: MVVM
 Networking Library: Retrofit
 Database Library: Room
 
-4. Libraries Used
+4. Dependencies - Libraries Used
 
 Retrofit: For network operations and API integration.
 
+'com.squareup.retrofit2:retrofit:2.11.0'
+'com.squareup.retrofit2:converter-gson:2.11.0'
+
 Room Database: For local storage of user data.
+
+'androidx.room:room-runtime:2.5.0'
+'annotationProcessor "androidx.room:room-compiler:2.6.1"'
 
 Picasso: For image loading and caching.
 
+'com.squareup.picasso:picasso:2.8'
+
 Material Design: For UI components and design elements.
+
+'com.google.android.material:material:1.11.0'
+
+Paging: For pagination.
+
+'androidx.paging:paging-runtime:3.1.1'
 
 5. Additional Features
 

@@ -24,12 +24,28 @@ The application follows the Model-View-ViewModel (MVVM) architecture to ensure a
 
 ## Dependencies
 
-* *Retrofit* - for network operations and API integration.
-* *Room Database* - for local storage of user data.
-* *Picasso* - for image loading and caching.
-* *Material Design* - for UI components and design elements.
-* *Paging library* - for pagination.
-
+Retrofit:
+```
+implementation 'com.squareup.retrofit2:retrofit:2.11.0'
+implementation 'com.squareup.retrofit2:converter-gson:2.11.0'
+```
+Room Database:
+```
+implementation "androidx.room:room-runtime:2.5.0"
+annotationProcessor "androidx.room:room-compiler:2.6.1"
+```
+Picasso (image loading):
+```
+implementation 'com.squareup.picasso:picasso:2.8'
+```
+Material Design:
+```
+implementation 'com.google.android.material:material:1.11.0'
+```
+Paging library:
+```
+implementation "androidx.paging:paging-runtime:3.1.1"
+```
 ## Installation
 
 1. **Clone the Repository**
