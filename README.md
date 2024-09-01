@@ -48,12 +48,14 @@ The data is then saved in the local database.
 <img src="https://github.com/user-attachments/assets/dbc23f2b-17bc-45fe-ad10-eaf13bc57743" height="560" />
 <br /> 
 <br /> 
-<br /> 
+<br />
 
-To ensure that the user data is retrieved from the API only once during the initial launch, a boolean
+> [!IMPORTANT]
+> To ensure that the user data is retrieved from the API only once during the initial launch, a boolean
 flag in Shared Preferences is used to track the initialization status of the database.
-<br /> I assumed that you want to retrieve the users from the API once when the app is launched and then manage them in
-the local database for subsequent operations to keep consistency.
+> I assumed that the best approach to keep consistency is to retrieve the users from the API once when the app is launched and then manage them in
+the local database for subsequent operations.
+
 <br />
 
 ### User Details
