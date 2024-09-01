@@ -122,15 +122,16 @@ public class EditUserFragment extends DialogFragment {
             String firstName = firstNameInput != null ? firstNameInput.getText().toString().trim() : "";
             String lastName = lastNameInput != null ? lastNameInput.getText().toString().trim() : "";
             String email = emailInput != null ? emailInput.getText().toString().trim() : "";
-
+            String avatarImage = avatarFilePath != null ? avatarFilePath : user.getAvatar();
             if (validateInputs()) {
                 user.setFirst_name(firstName);
                 user.setLast_name(lastName);
                 user.setEmail(email);
-                if (avatarFilePath != null) {
-                    user.setAvatar(avatarFilePath);
-                }
-                usersViewModel.updateUser(user.getId(), email, firstName, lastName, user.getAvatar());
+                user.setAvatar(avatarImage);
+//                if (avatarFilePath != null) {
+//                    user.setAvatar(avatarFilePath);
+//                }
+                usersViewModel.updateUser(user.getId(), email, firstName, lastName, avatarImage);
 
                 // Collect the updated user data and create a result bundle
                 Bundle result = new Bundle();

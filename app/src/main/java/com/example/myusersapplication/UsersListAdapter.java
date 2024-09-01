@@ -13,12 +13,15 @@ import android.view.ViewGroup;
 import android.view.ViewPropertyAnimator;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.view.ViewCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myusersapplication.models.User;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Callback;
 
 import java.util.List;
 
@@ -44,9 +47,10 @@ public class UsersListAdapter extends RecyclerView.Adapter<UsersViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull UsersViewHolder holder, int position) {
         User user = usersList.get(position);
-        holder.userName.setText(usersList.get(position).getFirst_name() + " " + usersList.get(position).getLast_name());
-        holder.userEmail.setText(usersList.get(position).getEmail());
-        String urlImg = usersList.get(position).getAvatar();
+        holder.userName.setText(user.getFirst_name() + " " + user.getLast_name());
+        holder.userEmail.setText(user.getEmail());
+        String urlImg = user.getAvatar();
+
         // Check if urlImg is null or empty
         if (urlImg != null && !urlImg.isEmpty()) {
             if (urlImg.startsWith("https")) {
@@ -62,7 +66,9 @@ public class UsersListAdapter extends RecyclerView.Adapter<UsersViewHolder> {
             holder.avatarImg.setImageResource(R.drawable.not_available);
         }
 
-        // Handle edit button click
+
+
+        // Handle edit button click (already existing code)
         holder.editButton.setOnClickListener(v -> {
             if (actionListener != null) {
                 actionListener.onEditUser(user);
@@ -117,11 +123,10 @@ public class UsersListAdapter extends RecyclerView.Adapter<UsersViewHolder> {
                     intent.putExtra("user", selectedUser);
 
                     // Set up the transition for shared elements
-                    // Set up the transition for shared elements
                     ActivityOptions options = ActivityOptions
-                            .makeSceneTransitionAnimation(activity, holder.avatarImg, "transition_img");
+                            .makeSceneTransitionAnimation(activity, holder.avatarImg, ViewCompat.getTransitionName(holder.avatarImg));
 
-                    // Start the UserDetailsActivity
+                    // Start the UserDetailsActivity for result
                     activity.startActivity(intent, options.toBundle());
                 }
             }

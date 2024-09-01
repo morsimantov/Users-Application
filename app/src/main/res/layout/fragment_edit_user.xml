@@ -89,7 +89,7 @@
     <FrameLayout
         android:id="@+id/avatar_upload_layout"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="95dp"
         android:orientation="horizontal"
         android:layout_marginTop="16dp"
         android:layout_below="@id/outlined_email">
@@ -123,7 +123,7 @@
             style="@style/UnderlinedButton"
             app:icon="@drawable/ic_baseline_upload_24"
             app:iconGravity="textStart"
-            android:layout_marginLeft="80dp"
+            android:layout_marginLeft="85dp"
              />
     </FrameLayout>
 

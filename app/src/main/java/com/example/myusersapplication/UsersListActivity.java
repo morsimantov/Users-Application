@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -28,15 +29,18 @@ import java.util.List;
 
 public class UsersListActivity extends AppCompatActivity {
 
+    private static final int EDIT_USER_REQUEST_CODE = 1;
+
     private UsersViewModel usersViewModel;
     private UsersListAdapter adapter;
-    private List<User> usersList;
+    private List<User> usersList = new ArrayList<>();
     private FloatingActionButton addUserButton;
     private ProgressBar progressBar;
     private RecyclerView recycler;
     private ImageView noDataImage;
     private TextView noDataText;
-
+    private boolean isLoading = true;
+    private boolean dataLoaded = false; // Track if data has been loaded
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,27 +89,27 @@ public class UsersListActivity extends AppCompatActivity {
         usersViewModel.getUsersLiveData().observe(this, new Observer<List<User>>() {
             @Override
             public void onChanged(List<User> users) {
-                if (users != null && !users.isEmpty()) {
-                    // Users found: update the list and show the RecyclerView
-                    usersList = users;
-                    adapter.updateList(usersList);
-                    adapter.notifyDataSetChanged();
+                if (users != null) {
+                    if (!users.isEmpty()) {
+                        usersList = users;
+                        adapter.updateList(usersList);
+                        adapter.notifyDataSetChanged();
 
-                    // Show the RecyclerView and hide the no data views
-                    recycler.setVisibility(View.VISIBLE);
-                    noDataImage.setVisibility(View.GONE);
-                    noDataText.setVisibility(View.GONE);
-                } else if (users.isEmpty()) {
-                    // No users found: show the no data views and hide the RecyclerView
-                    recycler.setVisibility(View.GONE);
-                    noDataImage.setVisibility(View.VISIBLE);
-                    noDataText.setVisibility(View.VISIBLE);
+                        progressBar.setVisibility(View.GONE);
+                        recycler.setVisibility(View.VISIBLE);
+                        noDataImage.setVisibility(View.GONE);
+                        noDataText.setVisibility(View.GONE);
+                        dataLoaded = true; // Data is successfully loaded
+                    } else if (dataLoaded) {
+                        // No users found after loading is complete
+                        recycler.setVisibility(View.GONE);
+                        noDataImage.setVisibility(View.VISIBLE);
+                        noDataText.setVisibility(View.VISIBLE);
+                    }
                 }
-
-                // Hide ProgressBar regardless of the data state
-                progressBar.setVisibility(View.GONE);
             }
         });
+
 
         // Load initial data
         usersViewModel.loadNextPage(0);
@@ -142,10 +146,44 @@ public class UsersListActivity extends AppCompatActivity {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
                 if (result.containsKey("updated_user")) {
-                    adapter.notifyDataSetChanged();
+                    User updatedUser = (User) result.getSerializable("updated_user");
+                    if (updatedUser != null) {
+                        int position = findUserPositionById(updatedUser.getId());
+                        if (position != -1) {
+                            usersList.set(position, updatedUser);
+                            adapter.notifyItemChanged(position);
+                        }
+                    }
                 }
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == EDIT_USER_REQUEST_CODE && resultCode == RESULT_OK) {
+            if (data != null && data.hasExtra("updated_user")) {
+                User updatedUser = (User) data.getSerializableExtra("updated_user");
+                if (updatedUser != null) {
+                    int position = findUserPositionById(updatedUser.getId());
+                    if (position != -1) {
+                        usersList.set(position, updatedUser);
+                        adapter.notifyItemChanged(position);
+                    }
+                }
+            }
+        }
+    }
+
+    // Helper method to find the position of the updated user
+    private int findUserPositionById(int userId) {
+        for (int i = 0; i < usersList.size(); i++) {
+            if (usersList.get(i).getId() == userId) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     @Override
@@ -153,5 +191,6 @@ public class UsersListActivity extends AppCompatActivity {
         super.onResume();
         usersViewModel.refreshUsers();
         adapter.notifyDataSetChanged();
+        ActivityCompat.startPostponedEnterTransition(this);
     }
 }

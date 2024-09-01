@@ -15,6 +15,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.ViewCompat;
 import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -55,6 +56,7 @@ public class UserDetailsActivity extends AppCompatActivity {
         lastName = findViewById(R.id.last_name);
         email = findViewById(R.id.email);
         avatarImg = findViewById(R.id.avatar_img);
+        ViewCompat.setTransitionName(avatarImg, "transition_img");
         editButton = findViewById(R.id.edit_button);
 
         nameTitle.setText(user.getFirst_name() + " " + user.getLast_name());
@@ -101,10 +103,14 @@ public class UserDetailsActivity extends AppCompatActivity {
                 if (result.containsKey("updated_user")) {
                     User updatedUser = (User) result.getSerializable("updated_user");
                     updateUI(updatedUser);
+
+                    // Notify the list activity about the change
+                    Intent returnIntent = new Intent();
+                    returnIntent.putExtra("updated_user", updatedUser);
+                    setResult(Activity.RESULT_OK, returnIntent);
                 }
             }
         });
-
     }
 
     private void updateUI(User user) {
@@ -113,23 +119,24 @@ public class UserDetailsActivity extends AppCompatActivity {
             firstName.setText(user.getFirst_name());
             lastName.setText(user.getLast_name());
             email.setText(user.getEmail());
-
             String urlImg = user.getAvatar();
+
+            // Check if urlImg is null or empty
             if (urlImg != null && !urlImg.isEmpty()) {
                 if (urlImg.startsWith("https")) {
                     Picasso.get()
                             .load(urlImg)
-                            .placeholder(R.drawable.not_available)
+                            .placeholder(R.drawable.not_available) // Default drawable resource
                             .into(avatarImg);
                 } else {
                     avatarImg.setImageURI(Uri.parse(urlImg));
                 }
             } else {
+                // Set a default image if urlImg is null or empty
                 avatarImg.setImageResource(R.drawable.not_available);
             }
         }
     }
-
 
     private void deleteUser() {
         new MaterialAlertDialogBuilder(this)
@@ -175,7 +182,7 @@ public class UserDetailsActivity extends AppCompatActivity {
                 deleteUser();
                 return true;
             case android.R.id.home:
-                this.finish();
+                this.finishAfterTransition();
                 return true;
         }
         return super.onOptionsItemSelected(item);
