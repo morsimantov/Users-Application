@@ -9,6 +9,7 @@
 **This is an Android app that manages a list of users with functionality to add, delete, and edit user details.**
 
 In this app I interacted with a RESTful API - [ReqRes API](https://reqres.in/ "ReqRes API") using Retrofit library to fetch user data, and Room database to store it locally.
+<br />
 The app provides a user-friendly interface that follows Material Design guidelines to ensure a modern and intuitive user experience.
 
 The application follows the Model-View-ViewModel (MVVM) architecture to ensure a clean separation of concerns.
@@ -29,13 +30,13 @@ The application follows the Model-View-ViewModel (MVVM) architecture to ensure a
    ```
 
 2. **Open the Project**
-  * Open Android Studio and select "Open an existing project."
-  * Navigate to the cloned project directory and open it.
+   * Open Android Studio and select "Open an existing project."
+   * Navigate to the cloned project directory and open it.
 
 
 3. **Build and Run**
-  * Ensure you have an emulator or a physical device connected.
-  * Click on the "Run" button in Android Studio to build and run the application.
+   * Ensure you have an emulator or a physical device connected.
+   * Click on the "Run" button in Android Studio to build and run the application.
 
 ## Usage
 
@@ -103,4 +104,4 @@ You can also select a user from the list and click the edit floating button to u
 - **Pagination:** The RecyclerView and Room database support pagination to handle large data sets efficiently.
 - **Error Handling:** Proper error messages are displayed in a snackbar if API requests fail or due to other errors, including input validation.
 - **Splash Screen:** a splash screen is shown before the app launches, enhancing the user experience.
-- **Transition Animations:** Transition animations between activities, and animated buttons and operations (like delete).
+- **Transition Animations:** Transition animations between activities, and animated buttons and operations (like deletion).
