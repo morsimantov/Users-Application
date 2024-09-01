@@ -2,21 +2,20 @@ package com.example.myusersapplication.mvvm;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Handler;
-import android.os.Looper;
-import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.myusersapplication.api.RetrofitClient;
-import com.example.myusersapplication.db.AppDatabase;
-import com.example.myusersapplication.db.UserDao;
+import com.example.myusersapplication.database.AppDatabase;
+import com.example.myusersapplication.database.UserDao;
 import com.example.myusersapplication.models.GetUsersResponse;
 import com.example.myusersapplication.models.User;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import retrofit2.Call;
@@ -31,7 +30,13 @@ public class UsersRepository {
     private UserDao userDao;
     private MutableLiveData<String> operationStatus = new MutableLiveData<>();
     private SharedPreferences sharedPreferences;
-    private boolean isFetching = false;  // Add this at the class level
+
+    // Single ExecutorService instance for managing background tasks
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+
+    // Flag to track if a fetch operation is in progress
+    private boolean isFetching = false;
+    // Flag to check if the database has been initialized
     private boolean isInitialized;
 
     public UsersRepository(Context context) {
@@ -46,67 +51,72 @@ public class UsersRepository {
         return operationStatus;
     }
 
-    // Method to get all users on a background thread
+    // Method to fetch all users from the database on a background thread
     public LiveData<List<User>> getAllUsers() {
         MutableLiveData<List<User>> data = new MutableLiveData<>();
-        Executors.newSingleThreadExecutor().execute(() -> {
+        executor.execute(() -> {
             List<User> users = userDao.getAllUsers();
             data.postValue(users);
         });
         return data;
     }
 
-    // Method to get users with paging
+    // Method to fetch users with pagination support
     public LiveData<List<User>> getUsersWithPaging(int limit, int offset) {
         MutableLiveData<List<User>> data = new MutableLiveData<>();
         // Check if a fetch operation is already in progress
         if (isFetching) {
-            Log.d(null, "Fetching already in progress, skipping...");
             return data;
         }
+        // Set flag to true indicating a fetch is in progress
         isFetching = true;
-        Executors.newSingleThreadExecutor().execute(() -> {
-            Log.d(null,  "init: " + isInitialized);
+        executor.execute(() -> {
             if (!isInitialized) {
+                // Calculate the page number based on offset and limit
                 int page_number = offset / limit + 1;
-                fetchUsersFromApi(page_number, data); // Pass MutableLiveData to update it with fetched data
-                Log.d(null, "fetching from API page number: " + page_number);
+                // Fetch users from API
+                fetchUsersFromApi(page_number, data);
             } else {
+                // Fetch users from database if already initialized
                 List<User> usersFromDb = userDao.getUsersWithPagingSync(limit, offset);
                 data.postValue(usersFromDb);
-                isFetching = false;  // Reset the flag after fetching from the database
+                // Reset the flag after fetching from the database
+                isFetching = false;
             }
         });
         return data;
     }
 
+    // Method to fetch users from API and update the database
     private void fetchUsersFromApi(int page, MutableLiveData<List<User>> data) {
         Call<GetUsersResponse> call = RetrofitClient.getInstance().getApi().getAllUsers(page);
         call.enqueue(new Callback<GetUsersResponse>() {
             @Override
-            public void onResponse(Call<GetUsersResponse> call, Response<GetUsersResponse> response) {
+            public void onResponse(@NonNull Call<GetUsersResponse> call, @NonNull Response<GetUsersResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     List<User> newUsers = response.body().getData();
                     if (!newUsers.isEmpty()) {
-                        Executors.newSingleThreadExecutor().execute(() -> {
+                        executor.execute(() -> {
                             List<User> usersToInsert = new ArrayList<>();
 
                             for (User user : newUsers) {
                                 // Check if the user already exists in the database
                                 if (userDao.getUserById(user.getId()) == null) {
-                                    usersToInsert.add(user); // Add to the list if the user does not exist
+                                    // Add to the list if the user does not exist
+                                    usersToInsert.add(user);
                                 }
                             }
 
                             if (!usersToInsert.isEmpty()) {
-                                userDao.insertUsers(usersToInsert); // Insert the filtered list
-                                data.postValue(usersToInsert); // Update LiveData with the new users
+                                // Insert the filtered list
+                                userDao.insertUsers(usersToInsert);
+                                // Update LiveData with the new users
+                                data.postValue(usersToInsert);
                             }
                         });
                     } else {
                         sharedPreferences.edit().putBoolean(KEY_INITIALIZED, true).apply();
                         isInitialized = true; // Cache the value
-                        Log.d(null, "Done initialization");
                     }
                 } else {
                     operationStatus.postValue("Failed to load users from API");
@@ -115,17 +125,17 @@ public class UsersRepository {
             }
 
             @Override
-            public void onFailure(Call<GetUsersResponse> call, Throwable t) {
+            public void onFailure(@NonNull Call<GetUsersResponse> call, @NonNull Throwable t) {
                 operationStatus.postValue("Error fetching users from API: " + t.getMessage());
-                isFetching = false;  // Reset the flag in case of failure
+                // Reset the flag in case of failure
+                isFetching = false;
             }
         });
     }
 
-
-    // Method to insert a user
+    // Method to insert a user into the database
     public void insertUser(String email, String firstName, String lastName, String avatar) {
-        Executors.newSingleThreadExecutor().execute(() -> {
+        executor.execute(() -> {
             try {
                 // Check if the email already exists
                 User user = userDao.getUserByEmail(email);
@@ -143,9 +153,9 @@ public class UsersRepository {
         });
     }
 
-    // method for deleting a user with a callback
+    // Method to delete a user from the database
     public void deleteUser(int userId) {
-        Executors.newSingleThreadExecutor().execute(() -> {
+        executor.execute(() -> {
             try {
                 userDao.deleteUser(userId);
                 operationStatus.postValue("User deleted");
@@ -155,9 +165,9 @@ public class UsersRepository {
         });
     }
 
-    // Method to update a user
+    // Method to update a user in the database
     public void updateUser(int id, String email, String firstName, String lastName, String avatar) {
-        Executors.newSingleThreadExecutor().execute(() -> {
+        executor.execute(() -> {
             try {
                 // Check if the email already exists
                 User user = userDao.getUserByEmail(email);

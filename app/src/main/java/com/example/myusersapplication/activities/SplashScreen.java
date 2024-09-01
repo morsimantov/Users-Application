@@ -1,4 +1,4 @@
-package com.example.myusersapplication;
+package com.example.myusersapplication.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -12,13 +12,11 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.myusersapplication.R;
+
 public class SplashScreen extends AppCompatActivity {
 
-    Animation topAnim,bottomAnim;
-    ImageView logo, title;
-    TextView textBy;
-
-    private static int SPLASH_SCREEN = 3000;
+    private static final int SPLASH_SCREEN = 3000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,27 +27,24 @@ public class SplashScreen extends AppCompatActivity {
 
         setContentView(R.layout.activity_splash_screen);
 
-        //Hooks
-        logo = findViewById(R.id.logo);
-        title = findViewById(R.id.title);
-        textBy = findViewById(R.id.text_by);
+        // Initialize local variables
+        ImageView logo = findViewById(R.id.logo);
+        ImageView title = findViewById(R.id.title);
+        TextView textBy = findViewById(R.id.text_by);
 
-        //Animations
-        topAnim = AnimationUtils.loadAnimation(this, R.anim.top_animation);
-        bottomAnim = AnimationUtils.loadAnimation(this, R.anim.bottom_animation);
+        // Initialize animations
+        Animation topAnim = AnimationUtils.loadAnimation(this, R.anim.top_animation);
+        Animation bottomAnim = AnimationUtils.loadAnimation(this, R.anim.bottom_animation);
 
-        //Set animation to elements
+        // Set animations to elements
         logo.setAnimation(topAnim);
         title.setAnimation(bottomAnim);
         textBy.setAnimation(bottomAnim);
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Intent intent = new Intent(SplashScreen.this, UsersListActivity.class);
-                startActivity(intent);
-                finish();
-            }
+        new Handler().postDelayed(() -> {
+            Intent intent = new Intent(SplashScreen.this, UsersListActivity.class);
+            startActivity(intent);
+            finish();
         }, SPLASH_SCREEN);
     }
 }

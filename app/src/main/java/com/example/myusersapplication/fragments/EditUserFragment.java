@@ -1,8 +1,6 @@
-package com.example.myusersapplication;
+package com.example.myusersapplication.fragments;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,17 +12,17 @@ import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.myusersapplication.R;
 import com.example.myusersapplication.models.User;
 import com.example.myusersapplication.mvvm.UsersViewModel;
 import com.example.myusersapplication.mvvm.UsersViewModelFactory;
+import com.example.myusersapplication.utils.AnimationUtils;
 import com.example.myusersapplication.utils.ImageUtils;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
-import com.squareup.picasso.Picasso;
 
 public class EditUserFragment extends DialogFragment {
 
@@ -34,13 +32,14 @@ public class EditUserFragment extends DialogFragment {
     private TextInputEditText lastNameInput;
     private TextInputEditText emailInput;
     private ImageView avatarImageView;
-
+    // Path to the selected avatar image
     private String avatarFilePath;
 
+    // Creates a new instance of the fragment with the user data
     public static EditUserFragment newInstance(User user) {
         EditUserFragment fragment = new EditUserFragment();
         Bundle args = new Bundle();
-        args.putSerializable(ARG_USER, user); // Pass the full user object
+        args.putSerializable(ARG_USER, user);
         fragment.setArguments(args);
         return fragment;
     }
@@ -48,7 +47,6 @@ public class EditUserFragment extends DialogFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_edit_user, container, false);
     }
 
@@ -69,15 +67,17 @@ public class EditUserFragment extends DialogFragment {
         UsersViewModelFactory factory = new UsersViewModelFactory(requireActivity().getApplication());
         usersViewModel = new ViewModelProvider(this, factory).get(UsersViewModel.class);
 
-        Button cancelButton = view.findViewById(R.id.cancelButton);
+        Button cancelButton = view.findViewById(R.id.cancel_button);
         ImageButton closeButton = view.findViewById(R.id.close_button);
         Button avatarUploadButton = view.findViewById(R.id.button_upload_avatar);
+        Button saveButton = view.findViewById(R.id.save_button);
 
         // Get the User object from the arguments
         User user = (User) getArguments().getSerializable(ARG_USER);
-        // Trigger image picker
-        addClickAnimation(avatarImageView);
-        addClickAnimation(avatarUploadButton);
+
+        // Set click animations for views
+        AnimationUtils.addClickAnimation(avatarImageView, () -> ImageUtils.openImageChooser(EditUserFragment.this));
+        AnimationUtils.addClickAnimation(avatarUploadButton, () -> ImageUtils.openImageChooser(EditUserFragment.this));
 
         if (user != null) {
             // Populate the fields with user data
@@ -85,61 +85,44 @@ public class EditUserFragment extends DialogFragment {
             lastNameInput.setText(user.getLast_name());
             emailInput.setText(user.getEmail());
 
-            String urlImg = user.getAvatar();
-            // Check if urlImg is null or empty
-            if (urlImg != null && !urlImg.isEmpty()) {
-                if (urlImg.startsWith("https")) {
-                    Picasso.get()
-                            .load(urlImg)
-                            .placeholder(R.drawable.not_available) // Default drawable resource
-                            .into(avatarImageView);
-                } else {
-                    avatarImageView.setImageURI(Uri.parse(urlImg));
-                }
-            } else {
-                // Set a default image if urlImg is null or empty
-                avatarImageView.setImageResource(R.drawable.not_available);
-            }
-
+            // Load avatar image
+            ImageUtils.loadImage(avatarImageView, user.getAvatar());
         }
 
-        usersViewModel.getOperationStatus().observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(String result) {
-                if (result != null) {
-                    // Log result to verify
-                    Log.d("EditUserFragment", "Operation Status: " + result);
-                    if (result.equals("User updated successfully")) {
-                        dismiss(); // Close the dialog on success
-                    }
-                }
-            }
-        });
-
-        Button saveButton = view.findViewById(R.id.saveButton);
-        // Handle save button
         saveButton.setOnClickListener(v -> {
-            String firstName = firstNameInput != null ? firstNameInput.getText().toString().trim() : "";
-            String lastName = lastNameInput != null ? lastNameInput.getText().toString().trim() : "";
-            String email = emailInput != null ? emailInput.getText().toString().trim() : "";
-            String avatarImage = avatarFilePath != null ? avatarFilePath : user.getAvatar();
-            if (validateInputs()) {
+            // Safely retrieve and trim text from input fields
+            String firstName = firstNameInput != null && firstNameInput.getText() != null
+                    ? firstNameInput.getText().toString().trim()
+                    : "";
+            String lastName = lastNameInput != null && lastNameInput.getText() != null
+                    ? lastNameInput.getText().toString().trim()
+                    : "";
+            String email = emailInput != null && emailInput.getText() != null
+                    ? emailInput.getText().toString().trim()
+                    : "";
+            String avatarImage = avatarFilePath != null ? avatarFilePath : (user != null ? user.getAvatar() : "");
+
+            if (user != null && validateInputs()) {
+                // Update user details
                 user.setFirst_name(firstName);
                 user.setLast_name(lastName);
                 user.setEmail(email);
                 user.setAvatar(avatarImage);
-//                if (avatarFilePath != null) {
-//                    user.setAvatar(avatarFilePath);
-//                }
                 usersViewModel.updateUser(user.getId(), email, firstName, lastName, avatarImage);
 
-                // Collect the updated user data and create a result bundle
-                Bundle result = new Bundle();
-                result.putSerializable("updated_user", user);
-
-                // Send the result to the activity
-                getParentFragmentManager().setFragmentResult("edit_user_request", result);
-                dismiss(); // Close the dialog on success
+                // Observe the operation status and handle it appropriately
+                usersViewModel.getOperationStatus().observe(getViewLifecycleOwner(), result -> {
+                    if ("User updated successfully".equals(result)) {
+                        Bundle resultBundle = new Bundle();
+                        resultBundle.putSerializable("updated_user", user);
+                        getParentFragmentManager().setFragmentResult("edit_user_request", resultBundle);
+                        dismiss();
+                    } else {
+                        Snackbar.make(view, result, Snackbar.LENGTH_SHORT).show();
+                    }
+                });
+            } else {
+                Log.e("EditUserFragment", "User is null or validation failed");
             }
         });
 
@@ -148,35 +131,34 @@ public class EditUserFragment extends DialogFragment {
         closeButton.setOnClickListener(v -> dismiss());
     }
 
+    // Validate user inputs
     private boolean validateInputs() {
-        if (firstNameInput.getText().toString().trim().isEmpty()) {
+        String firstName = firstNameInput.getText() != null ? firstNameInput.getText().toString().trim() : "";
+        String lastName = lastNameInput.getText() != null ? lastNameInput.getText().toString().trim() : "";
+        String email = emailInput.getText() != null ? emailInput.getText().toString().trim() : "";
+
+        boolean isValid = true;
+
+        if (firstName.isEmpty()) {
             firstNameInput.setError("First name is required");
-            return false;
+            isValid = false;
         }
-        if (lastNameInput.getText().toString().trim().isEmpty()) {
+        if (lastName.isEmpty()) {
             lastNameInput.setError("Last name is required");
-            return false;
+            isValid = false;
         }
-        if (emailInput.getText().toString().trim().isEmpty()) {
+        if (email.isEmpty()) {
             emailInput.setError("Email is required");
-            return false;
+            isValid = false;
         }
-        return true;
+
+        return isValid;
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        // Handle image chooser result
         avatarFilePath = ImageUtils.handleImageChooserResult(requestCode, resultCode, data, avatarImageView, requireActivity());
-    }
-
-    private void addClickAnimation(View view) {
-        view.setOnClickListener(v -> {
-            // Simple click animation
-            view.animate().scaleX(0.9f).scaleY(0.9f).setDuration(200).withEndAction(() -> {
-                view.animate().scaleX(1.0f).scaleY(1.0f).setDuration(200).start();
-                ImageUtils.openImageChooser(EditUserFragment.this);
-            }).start();
-        });
     }
 }

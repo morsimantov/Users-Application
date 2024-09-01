@@ -1,10 +1,8 @@
-package com.example.myusersapplication;
+package com.example.myusersapplication.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -13,11 +11,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.myusersapplication.R;
 import com.example.myusersapplication.mvvm.UsersViewModel;
 import com.example.myusersapplication.mvvm.UsersViewModelFactory;
+import com.example.myusersapplication.utils.AnimationUtils;
 import com.example.myusersapplication.utils.ImageUtils;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -28,7 +27,8 @@ public class AddUserActivity extends AppCompatActivity {
     private EditText lastNameInput;
     private EditText emailInput;
     private UsersViewModel usersViewModel;
-    private String avatarFilePath;  // Path to the saved avatar image
+    // Path to the saved avatar image
+    private String avatarFilePath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,49 +39,42 @@ public class AddUserActivity extends AppCompatActivity {
         firstNameInput = findViewById(R.id.first_name);
         lastNameInput = findViewById(R.id.last_name);
         emailInput = findViewById(R.id.email);
-        Button uploadButton = findViewById(R.id.upload_button);
-
-        Button saveButton = findViewById(R.id.saveButton);
-        Button cancelButton = findViewById(R.id.cancelButton);
         avatarImageView = findViewById(R.id.input_avatar);
 
+        Button uploadButton = findViewById(R.id.upload_button);
+        Button saveButton = findViewById(R.id.save_button);
+        Button cancelButton = findViewById(R.id.cancel_button);
+
+        // Initialize ViewModel with factory
         UsersViewModelFactory factory = new UsersViewModelFactory(getApplication());
         usersViewModel = new ViewModelProvider(this, factory).get(UsersViewModel.class);
 
-        // Define the click listener to open the image chooser
-        View.OnClickListener openImageChooserListener = v -> ImageUtils.openImageChooser(AddUserActivity.this);
-
-        addClickAnimation(avatarImageView);
-
         // Trigger image picker
-        // Set the same click listener for both the button and the image view
-        uploadButton.setOnClickListener(openImageChooserListener);
+        uploadButton.setOnClickListener(v -> ImageUtils.openImageChooser(this));
+        // Add click animation to the avatar ImageView
+        AnimationUtils.addClickAnimation(avatarImageView, () -> ImageUtils.openImageChooser(AddUserActivity.this));
 
-        // calling the action bar
+        // Set up the action bar and enable the back button
         ActionBar actionBar = getSupportActionBar();
-
-        // showing the back button in action bar
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         // Observe operationStatus
-        usersViewModel.getOperationStatus().observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(String statusMessage) {
-                if (statusMessage != null && !statusMessage.isEmpty()) {
-                    // Show a message to the user
-                    // Log result to verify
-                    Log.d("AddUserActivity", "Operation Status: " + statusMessage);
-                    Snackbar.make(findViewById(android.R.id.content), statusMessage, Snackbar.LENGTH_SHORT).show();
-                    // Finish the activity on success
-                    if (statusMessage.equals("User created successfully")) {
-                        finish();
-                    }
+        usersViewModel.getOperationStatus().observe(this, statusMessage -> {
+            if (statusMessage != null && !statusMessage.isEmpty()) {
+                // Show a message to the user
+                Snackbar.make(findViewById(android.R.id.content), statusMessage, Snackbar.LENGTH_SHORT).show();
+                // Finish the activity if user creation is successful
+                if (statusMessage.equals("User created successfully")) {
+                    finish();
                 }
             }
         });
 
-        // Save button logic
+        // Save button logic: Validate inputs and insert user if valid
         saveButton.setOnClickListener(v -> {
+            // If the inputs are valid
             if (validateInputs()) {
                 String email = emailInput.getText().toString();
                 String firstName = firstNameInput.getText().toString();
@@ -91,50 +84,46 @@ public class AddUserActivity extends AppCompatActivity {
             }
         });
 
-        // Cancel button logic
+        // Cancel button logic: Finish the activity with transition
         cancelButton.setOnClickListener(v -> finishAfterTransition());
     }
 
+    // Validate user inputs
     private boolean validateInputs() {
+        boolean isValid = true;
+
         if (firstNameInput.getText().toString().trim().isEmpty()) {
             firstNameInput.setError("First name is required");
-            return false;
+            isValid = false;
         }
         if (lastNameInput.getText().toString().trim().isEmpty()) {
             lastNameInput.setError("Last name is required");
-            return false;
+            isValid = false;
         }
         if (emailInput.getText().toString().trim().isEmpty()) {
             emailInput.setError("Email is required");
-            return false;
+            isValid = false;
         }
-        return true;
+        return isValid;
     }
 
+    // Handle results from image picker
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        // Process the result of the image picker
         avatarFilePath = ImageUtils.handleImageChooserResult(requestCode, resultCode, data, avatarImageView, this);
     }
 
-    // this event will enable the back function to the button on press
+    // Handle back button in the action bar
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
+                // Finish activity with transition when back button is pressed
                 this.finishAfterTransition();
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void addClickAnimation(View view) {
-        view.setOnClickListener(v -> {
-            // Simple click animation
-            view.animate().scaleX(0.9f).scaleY(0.9f).setDuration(200).withEndAction(() -> {
-                view.animate().scaleX(1.0f).scaleY(1.0f).setDuration(200).start();
-                ImageUtils.openImageChooser(AddUserActivity.this);
-            }).start();
-        });
     }
 }

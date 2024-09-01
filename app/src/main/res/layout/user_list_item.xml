@@ -15,12 +15,13 @@
         android:orientation="horizontal"
         android:padding="6dp">
 
+        <!-- Avatar Section -->
         <androidx.cardview.widget.CardView
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_gravity="center_vertical"
-            app:cardElevation="3dp"
-            app:cardCornerRadius="2dp">
+            app:cardCornerRadius="2dp"
+            app:cardElevation="3dp">
 
             <ImageView
                 android:id="@+id/avatar_img"
@@ -29,9 +30,11 @@
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop"
                 android:src="@drawable/not_available"
-                android:transitionName="transition_img"/>
+                android:transitionName="transition_img"
+                android:contentDescription="@string/empty_image_description"/>
         </androidx.cardview.widget.CardView>
 
+        <!-- User Information Section -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -40,16 +43,18 @@
             android:backgroundTint="#95FFFFFF"
             android:orientation="vertical">
 
+            <!-- Name Display -->
             <TextView
                 android:id="@+id/name"
-                android:layout_marginTop="4dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
                 android:fontFamily="@font/poppins"
                 android:textColor="@color/black"
                 android:textSize="17sp"
-                android:textStyle="bold"></TextView>
+                android:textStyle="bold" />
 
+            <!-- Email Display -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -62,9 +67,9 @@
                     android:layout_marginTop="18dp"
                     android:layout_marginRight="6dp"
                     android:fontFamily="@font/poppins"
-                    android:text="Email:"
+                    android:text="@string/email_colon"
                     android:textColor="@color/black"
-                    android:textSize="12sp"></TextView>
+                    android:textSize="12sp" />
 
                 <TextView
                     android:id="@+id/email"
@@ -74,11 +79,12 @@
                     android:fontFamily="@font/poppins"
                     android:maxLines="1"
                     android:textColor="@color/purple_500"
-                    android:textSize="12sp"></TextView>
+                    android:textSize="12sp" />
             </LinearLayout>
 
         </LinearLayout>
 
+        <!-- Action Buttons -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -87,6 +93,7 @@
             android:layout_marginEnd="8dp"
             android:orientation="vertical">
 
+            <!-- Edit Button -->
             <ImageButton
                 android:id="@+id/edit_button"
                 android:layout_width="wrap_content"
@@ -94,15 +101,18 @@
                 android:layout_marginBottom="8dp"
                 android:background="?attr/selectableItemBackground"
                 android:padding="8dp"
-                android:src="@drawable/ic_baseline_edit_24" />
+                android:src="@drawable/ic_baseline_edit_24"
+                android:contentDescription="@string/edit"/>
 
+            <!-- Delete Button -->
             <ImageButton
                 android:id="@+id/delete_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackground"
                 android:padding="8dp"
-                android:src="@drawable/ic_baseline_delete_24" />
+                android:src="@drawable/ic_baseline_delete_24"
+                android:contentDescription="@string/delete"/>
 
         </LinearLayout>
 

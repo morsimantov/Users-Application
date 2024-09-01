@@ -1,8 +1,7 @@
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="24dp"
     android:transitionName="transition_fab">
 
@@ -11,21 +10,21 @@
         android:id="@+id/form_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Add a New User"
-        android:textSize="20sp"
-        android:fontFamily="@font/poppins"
+        android:layout_alignParentStart="true"
         android:layout_marginBottom="16dp"
+        android:fontFamily="@font/poppins"
+        android:text="@string/form_title"
         android:textColor="@color/purple_700"
-        android:layout_alignParentStart="true" />
+        android:textSize="20sp" />
 
     <!-- First Name Input -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/outlined_first_name"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="First Name"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_below="@id/form_title">
+        android:layout_below="@id/form_title"
+        android:hint="@string/first_name">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/first_name"
@@ -37,12 +36,12 @@
     <!-- Last Name Input -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/outlined_last_name"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Last Name"
+        android:layout_below="@id/outlined_first_name"
         android:layout_marginTop="16dp"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_below="@id/outlined_first_name">
+        android:hint="@string/last_name">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/last_name"
@@ -54,12 +53,12 @@
     <!-- Email Input -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/outlined_email"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Email"
+        android:layout_below="@id/outlined_last_name"
         android:layout_marginTop="16dp"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_below="@id/outlined_last_name">
+        android:hint="@string/email">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/email"
@@ -73,31 +72,30 @@
         android:id="@+id/avatar_upload_layout"
         android:layout_width="match_parent"
         android:layout_height="190dp"
-        android:layout_marginTop="20dp"
-        android:layout_below="@id/outlined_email">
+        android:layout_below="@id/outlined_email"
+        android:layout_marginTop="20dp">
 
         <!-- Avatar Image -->
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/input_avatar"
             android:layout_width="158dp"
             android:layout_height="158dp"
-            android:src="@drawable/upload"
-            android:contentDescription="Avatar Image"
-            app:shapeAppearanceOverlay="@style/CircularImageView"
-            android:scaleType="centerCrop"
+            android:background="@drawable/ripple_effect"
             android:clickable="true"
             android:focusable="true"
-            android:background="@drawable/ripple_effect"/>
+            android:scaleType="centerCrop"
+            android:src="@drawable/upload"
+            app:shapeAppearanceOverlay="@style/CircularImageView" />
 
         <!-- Upload Button -->
         <Button
             android:id="@+id/upload_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
             android:backgroundTint="@color/purple_500"
-            android:text="UPLOAD AVATAR"
-            android:textColor="@android:color/white"
-            android:layout_gravity="bottom" />
+            android:text="@string/upload_avatar"
+            android:textColor="@android:color/white" />
     </FrameLayout>
 
     <!-- Save and Cancel Buttons -->
@@ -107,25 +105,26 @@
         android:layout_alignParentBottom="true"
         android:layout_marginTop="18dp"
         android:gravity="end"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        style="?android:attr/buttonBarStyle">
 
         <Button
-            android:id="@+id/cancelButton"
-            style="?attr/materialButtonOutlinedStyle"
+            android:id="@+id/cancel_button"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
-            android:text="CANCEL"
+            android:text="@string/cancel"
             android:textColor="@color/purple_500" />
 
         <Button
-            android:id="@+id/saveButton"
+            android:id="@+id/save_button"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/purple_500"
-            android:text="SAVE"
+            android:text="@string/save"
             android:textColor="@android:color/white" />
     </LinearLayout>
-
 
 </RelativeLayout>

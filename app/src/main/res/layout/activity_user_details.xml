@@ -5,169 +5,170 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".UserDetailsActivity">
+    tools:context=".activities.UserDetailsActivity">
 
-
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="365dp">
 
-
-        <FrameLayout
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="365dp">
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:elevation="8dp">
 
-            <androidx.cardview.widget.CardView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:elevation="8dp">
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <!-- Name Title -->
+                <TextView
+                    android:id="@+id/name_title"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:orientation="vertical">
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:fontFamily="@font/poppins"
+                    android:textAlignment="center"
+                    android:textColor="@color/black"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
 
-                    <TextView
-                        android:id="@+id/name_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginBottom="16dp"
-                        android:fontFamily="@font/poppins"
-                        android:textAlignment="center"
-                        android:textColor="@color/black"
-                        android:textSize="22sp"
-                        android:textStyle="bold"></TextView>
+                <!-- Avatar Image -->
+                <androidx.cardview.widget.CardView
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="60dp"
+                    app:cardCornerRadius="2dp"
+                    app:cardElevation="3dp">
 
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="200dp"
-                        android:layout_height="200dp"
-                        android:layout_gravity="center"
-                        android:layout_marginBottom="60dp"
-                        app:cardCornerRadius="2dp"
-                        app:cardElevation="3dp">
+                    <ImageView
+                        android:id="@+id/avatar_img"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:adjustViewBounds="true"
+                        android:contentDescription="@string/empty_image_description"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/not_available"
+                        android:transitionName="transition_img" />
+                </androidx.cardview.widget.CardView>
 
-                        <ImageView
-                            android:id="@+id/avatar_img"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:adjustViewBounds="true"
-                            android:scaleType="centerCrop"
-                            android:src="@drawable/not_available"
-                            android:transitionName="transition_img" />
-                    </androidx.cardview.widget.CardView>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
+        <!-- Edit Button -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/edit_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_marginRight="30dp"
+            android:contentDescription="@string/edit"
+            app:backgroundTint="@color/purple_500"
+            app:srcCompat="@drawable/ic_baseline_edit_24"
+            app:tint="@android:color/white" />
+    </FrameLayout>
 
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/edit_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|right"
-                android:layout_marginRight="30dp"
-                app:backgroundTint="@color/purple_500"
-                app:srcCompat="@drawable/ic_baseline_edit_24"
-                app:tint="@android:color/white" />
-        </FrameLayout>
+    <!-- User Details Title -->
+    <TextView
+        android:id="@+id/user_details"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
+        android:fontFamily="@font/poppins"
+        android:text="@string/user_details_title"
+        android:textColor="@color/purple_700"
+        android:textSize="20sp" />
+
+    <!-- First Name -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/user_details"
+            android:id="@+id/first_name_head"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginRight="7dp"
             android:layout_marginBottom="12dp"
             android:fontFamily="@font/poppins"
-            android:text="User Details"
-            android:textColor="@color/purple_700"
-            android:textSize="20sp"></TextView>
+            android:text="@string/first_name_colon"
+            android:textColor="@color/black"
+            android:textSize="15sp" />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/first_name"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_marginBottom="12dp"
+            android:fontFamily="@font/poppins"
+            android:maxLines="1"
+            android:textColor="@color/black"
+            android:textSize="15sp" />
+    </LinearLayout>
 
-            <TextView
-                android:id="@+id/first_name_head"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="7dp"
-                android:layout_marginBottom="12dp"
-                android:fontFamily="@font/poppins"
-                android:text="First Name:"
-                android:textColor="@color/black"
-                android:textSize="15sp"></TextView>
+    <!-- Last Name -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/first_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:fontFamily="@font/poppins"
-                android:maxLines="1"
-                android:textColor="@color/black"
-                android:textSize="15sp"></TextView>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/last_name_head"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="7dp"
+            android:layout_marginBottom="12dp"
+            android:fontFamily="@font/poppins"
+            android:text="@string/last_name_colon"
+            android:textColor="@color/black"
+            android:textSize="15sp" />
 
-            <TextView
-                android:id="@+id/last_name_head"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="7dp"
-                android:layout_marginBottom="12dp"
-                android:fontFamily="@font/poppins"
-                android:text="Last Name:"
-                android:textColor="@color/black"
-                android:textSize="15sp"></TextView>
-
-            <TextView
-                android:id="@+id/last_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:fontFamily="@font/poppins"
-                android:maxLines="1"
-                android:textColor="@color/black"
-                android:textSize="15sp"></TextView>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/last_name"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_marginBottom="12dp"
+            android:fontFamily="@font/poppins"
+            android:maxLines="1"
+            android:textColor="@color/black"
+            android:textSize="15sp" />
+    </LinearLayout>
 
-            <TextView
-                android:id="@+id/email_head"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="7dp"
-                android:layout_marginBottom="12dp"
-                android:fontFamily="@font/poppins"
-                android:text="Email:"
-                android:textColor="@color/black"
-                android:textSize="15sp"></TextView>
+    <!-- Email -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/email"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:fontFamily="@font/poppins"
-                android:maxLines="1"
-                android:textColor="@color/purple_500"
-                android:textSize="15sp"></TextView>
-        </LinearLayout>
+        <TextView
+            android:id="@+id/email_head"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="7dp"
+            android:layout_marginBottom="12dp"
+            android:fontFamily="@font/poppins"
+            android:text="@string/email_colon"
+            android:textColor="@color/black"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:fontFamily="@font/poppins"
+            android:maxLines="1"
+            android:textColor="@color/purple_500"
+            android:textSize="15sp" />
     </LinearLayout>
 </LinearLayout>

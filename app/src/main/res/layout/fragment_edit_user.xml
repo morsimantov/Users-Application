@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="24dp">
 
     <FrameLayout
@@ -15,34 +15,34 @@
         android:id="@+id/close_button"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:src="@drawable/ic_baseline_close_24"
-        android:contentDescription="Close"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:padding="8dp"
+        android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"/>
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/close"
+        android:padding="8dp"
+        android:src="@drawable/ic_baseline_close_24" />
 
     <!-- Title -->
     <TextView
         android:id="@+id/form_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Edit User Details"
-        android:textSize="20sp"
-        android:fontFamily="@font/poppins"
+        android:layout_alignParentStart="true"
         android:layout_marginBottom="24dp"
-        android:textColor="@color/purple_700"
         android:layout_toStartOf="@id/close_button"
-        android:layout_alignParentStart="true"/>
+        android:fontFamily="@font/poppins"
+        android:text="@string/edit_user_details"
+        android:textColor="@color/purple_700"
+        android:textSize="20sp" />
 
     <!-- First Name Input -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/outlined_first_name"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="First Name"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_below="@id/form_title">
+        android:layout_below="@id/form_title"
+        android:hint="@string/first_name">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edit_first_name"
@@ -54,12 +54,12 @@
     <!-- Last Name Input -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/outlined_last_name"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Last Name"
+        android:layout_below="@id/outlined_first_name"
         android:layout_marginTop="16dp"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_below="@id/outlined_first_name">
+        android:hint="@string/last_name">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edit_last_name"
@@ -71,12 +71,12 @@
     <!-- Email Input -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/outlined_email"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Email"
+        android:layout_below="@id/outlined_last_name"
         android:layout_marginTop="16dp"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_below="@id/outlined_last_name">
+        android:hint="@string/email">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edit_email"
@@ -90,46 +90,46 @@
         android:id="@+id/avatar_upload_layout"
         android:layout_width="match_parent"
         android:layout_height="95dp"
-        android:orientation="horizontal"
+        android:layout_below="@id/outlined_email"
         android:layout_marginTop="16dp"
-        android:layout_below="@id/outlined_email">
+        android:orientation="horizontal">
 
         <androidx.cardview.widget.CardView
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_gravity="center_vertical"
-            app:cardElevation="4dp"
-            app:cardCornerRadius="3dp">
+            app:cardCornerRadius="3dp"
+            app:cardElevation="4dp">
 
             <ImageView
                 android:id="@+id/avatar_img"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:adjustViewBounds="true"
-                android:scaleType="centerCrop"
-                android:src="@drawable/not_available"
+                android:background="@drawable/ripple_effect"
                 android:clickable="true"
+                android:contentDescription="@string/empty_image_description"
                 android:focusable="true"
-                android:background="@drawable/ripple_effect"/>
+                android:scaleType="centerCrop"
+                android:src="@drawable/not_available" />
         </androidx.cardview.widget.CardView>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_upload_avatar"
+            style="@style/UnderlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Upload Image"
-            android:textSize="14sp"
             android:layout_gravity="bottom"
-            style="@style/UnderlinedButton"
-            app:icon="@drawable/ic_baseline_upload_24"
-            app:iconGravity="textStart"
             android:layout_marginLeft="85dp"
-             />
+            android:text="@string/upload_image"
+            android:textSize="14sp"
+            app:icon="@drawable/ic_baseline_upload_24"
+            app:iconGravity="textStart" />
     </FrameLayout>
-
 
     <!-- Save and Cancel Buttons -->
     <LinearLayout
+        style="?android:attr/buttonBarStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/avatar_upload_layout"
@@ -138,20 +138,21 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/cancelButton"
-            style="?attr/materialButtonOutlinedStyle"
+            android:id="@+id/cancel_button"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
-            android:text="CANCEL"
+            android:text="@string/cancel"
             android:textColor="@color/purple_500" />
 
         <Button
-            android:id="@+id/saveButton"
+            android:id="@+id/save_button"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/purple_500"
-            android:text="SAVE"
+            android:text="@string/save"
             android:textColor="@android:color/white" />
 
     </LinearLayout>

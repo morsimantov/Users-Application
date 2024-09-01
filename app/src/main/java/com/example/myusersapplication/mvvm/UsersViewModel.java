@@ -14,9 +14,15 @@ import java.util.List;
 
 public class UsersViewModel extends ViewModel {
 
+    // Number of users to fetch per page
     public static final int PAGE_SIZE = 6;
+
     private UsersRepository usersRepository;
+
+    // LiveData for observing the list of users
     private MutableLiveData<List<User>> usersLiveData = new MutableLiveData<>();
+
+    // LiveData for observing operation status (e.g., success or error messages)
     private LiveData<String> operationStatus;
 
     public UsersViewModel(@NonNull Application application) {
@@ -25,24 +31,26 @@ public class UsersViewModel extends ViewModel {
 
         // Initialize operationStatus
         operationStatus = usersRepository.getOperationStatus();
-        loadNextPage(0);
     }
 
-    // Getter for usersLiveData
+    // Getter for usersLiveData to observe the list of users
     public LiveData<List<User>> getUsersLiveData() {
         return usersLiveData;
     }
 
-    // Getter for operationStatus
+    // Getter for operationStatus to observe the status of operations
     public LiveData<String> getOperationStatus() {
         return operationStatus;
     }
 
+    // Method to load the next page of users from the repository
     public void loadNextPage(int offset) {
+        // Fetch users with pagination from the repository
         usersRepository.getUsersWithPaging(PAGE_SIZE, offset)
                 // Observe the data returned by the repository indefinitely
                 .observeForever(newUsers -> {
                     if (newUsers != null) {
+                        // Get the current list of users
                         List<User> currentUsers = usersLiveData.getValue();
                         // If there are already users loaded, add the new users to the existing list
                         if (currentUsers != null) {
@@ -57,22 +65,22 @@ public class UsersViewModel extends ViewModel {
                 });
     }
 
+    // Method to refresh the list of users from the repository
     public void refreshUsers() {
-        usersRepository.getAllUsers().observeForever(users -> {
-            usersLiveData.postValue(users);
-        });
+        usersRepository.getAllUsers().observeForever(users -> usersLiveData.postValue(users));
     }
 
+    // Method to insert a new user into the repository
     public void insertUser(String email, String firstName, String lastName, String avatar) {
         usersRepository.insertUser(email, firstName, lastName, avatar);
     }
 
+    // Method to delete a user by ID from the repository
     public void deleteUser(int userId) {
-        // Delete the user from the repository
         usersRepository.deleteUser(userId);
-        refreshUsers();
     }
 
+    // Method to update an existing user in the repository
     public void updateUser(int id, String email, String firstName, String lastName, String avatar) {
         usersRepository.updateUser(id, email, firstName, lastName, avatar);
     }

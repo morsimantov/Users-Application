@@ -17,7 +17,7 @@
         android:supportsRtl="false"
         tools:targetApi="31">
         <activity
-            android:name=".SplashScreen"
+            android:name=".activities.SplashScreen"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,21 +30,21 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".UsersListActivity"
+            android:name=".activities.UsersListActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".AddUserActivity"
+            android:name=".activities.AddUserActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".UserDetailsActivity"
+            android:name=".activities.UserDetailsActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"

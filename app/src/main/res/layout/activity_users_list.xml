@@ -2,10 +2,10 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinator_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".UsersListActivity"
-    android:id="@+id/coordinator_layout">
+    tools:context=".activities.UsersListActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -18,65 +18,68 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:layout_marginTop="12dp"
-            android:text="Users"
             android:fontFamily="@font/poppins"
-            android:textSize="20sp"
-            android:textColor="@color/black" />
+            android:text="@string/title_users"
+            android:textColor="@color/black"
+            android:textSize="20sp" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/users_recycler"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
             android:layout_marginTop="5dp"
-            android:layout_marginBottom="16dp"
             android:layout_marginRight="16dp"
-            android:layout_marginLeft="16dp"/>
+            android:layout_marginBottom="16dp" />
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/add_user_button"
-        android:transitionName="transition_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
         android:layout_margin="16dp"
-        app:srcCompat="@drawable/ic_baseline_add_24"
         android:backgroundTint="@color/purple_500"
-        app:tint="@android:color/white"/>
+        android:transitionName="transition_fab"
+        app:srcCompat="@drawable/ic_baseline_add_24"
+        app:tint="@android:color/white" />
 
+    <!-- Show ProgressBar initially -->
     <ProgressBar
         android:id="@+id/progress_circular"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:visibility="visible"
-        android:indeterminateTint="@color/purple_500"/>
-    <!-- Show ProgressBar initially -->
+        android:indeterminateTint="@color/purple_500"
+        android:visibility="visible" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_gravity="center">
-    <ImageView
-        android:id="@+id/empty_imageview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:alpha="0.1"
         android:layout_gravity="center"
-        app:srcCompat="@drawable/ic_empty"
-        android:visibility="gone"/>
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/no_data"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="No Data"
-        android:layout_gravity="center"
-        android:fontFamily="@font/poppins"
-        android:textSize="20sp"
-        android:alpha="0.4"
-        android:visibility="gone"/>
+        <ImageView
+            android:id="@+id/empty_imageview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:alpha="0.1"
+            android:visibility="gone"
+            app:srcCompat="@drawable/ic_empty"
+            android:contentDescription="@string/empty_image_description"/>
+
+        <TextView
+            android:id="@+id/no_data"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:alpha="0.4"
+            android:fontFamily="@font/poppins"
+            android:text="@string/no_data"
+            android:textSize="20sp"
+            android:visibility="gone" />
     </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

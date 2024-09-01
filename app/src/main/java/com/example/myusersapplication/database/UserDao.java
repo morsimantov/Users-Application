@@ -1,10 +1,7 @@
-package com.example.myusersapplication.db;
+package com.example.myusersapplication.database;
 
-import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
-import androidx.room.OnConflictStrategy;
-import androidx.room.Update;
 import androidx.room.Query;
 
 import com.example.myusersapplication.models.User;
@@ -23,12 +20,6 @@ public interface UserDao {
     @Query("SELECT * FROM user")
     List<User> getAllUsers();
 
-    @Query("SELECT * FROM user")
-    LiveData<List<User>> getAllUsersLiveData();
-
-    @Query("SELECT * FROM user LIMIT :limit OFFSET :offset")
-    LiveData<List<User>> getUsersWithPaging(int limit, int offset);
-
     @Query("SELECT * FROM User ORDER BY id LIMIT :limit OFFSET :offset")
     List<User> getUsersWithPagingSync(int limit, int offset);
 
@@ -44,6 +35,4 @@ public interface UserDao {
     @Query("SELECT * FROM user WHERE email = :email")
     User getUserByEmail(String email);
 
-    @Query("SELECT COUNT(*) FROM user")
-    int getUserCount();
 }

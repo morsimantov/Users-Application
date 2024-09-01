@@ -3,35 +3,32 @@ package com.example.myusersapplication;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.ActivityOptions;
-import android.app.Application;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewPropertyAnimator;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.myusersapplication.activities.UserDetailsActivity;
 import com.example.myusersapplication.models.User;
+import com.example.myusersapplication.utils.ImageUtils;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Callback;
 
 import java.util.List;
 
 public class UsersListAdapter extends RecyclerView.Adapter<UsersViewHolder> {
 
     private List<User> usersList;
-    private final FragmentActivity activity;  // Use FragmentActivity for access to FragmentManager
+    // Use FragmentActivity for access to FragmentManager
+    private final FragmentActivity activity;
     private final UserActionListener actionListener;
 
-    public UsersListAdapter(List<User> usersList, FragmentActivity activity, Application application, UserActionListener actionListener) {
+    public UsersListAdapter(List<User> usersList, FragmentActivity activity, UserActionListener actionListener) {
         this.usersList = usersList;
         this.activity = activity;
         this.actionListener = actionListener;
@@ -46,27 +43,16 @@ public class UsersListAdapter extends RecyclerView.Adapter<UsersViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull UsersViewHolder holder, int position) {
+        // Get the current user based on position
         User user = usersList.get(position);
+
+        // Get the current user based on position
         holder.userName.setText(user.getFirst_name() + " " + user.getLast_name());
         holder.userEmail.setText(user.getEmail());
         String urlImg = user.getAvatar();
 
-        // Check if urlImg is null or empty
-        if (urlImg != null && !urlImg.isEmpty()) {
-            if (urlImg.startsWith("https")) {
-                Picasso.get()
-                        .load(urlImg)
-                        .placeholder(R.drawable.not_available) // Default drawable resource
-                        .into(holder.avatarImg);
-            } else {
-                holder.avatarImg.setImageURI(Uri.parse(urlImg));
-            }
-        } else {
-            // Set a default image if urlImg is null or empty
-            holder.avatarImg.setImageResource(R.drawable.not_available);
-        }
-
-
+        // Load avatar image
+        ImageUtils.loadImage(holder.avatarImg, urlImg);
 
         // Handle edit button click (already existing code)
         holder.editButton.setOnClickListener(v -> {
@@ -75,19 +61,17 @@ public class UsersListAdapter extends RecyclerView.Adapter<UsersViewHolder> {
             }
         });
 
-        holder.deleteButton.setOnClickListener(v -> {
-            new MaterialAlertDialogBuilder(activity)
-                    .setMessage("Are you sure you want to delete?")
-                    .setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
+        holder.deleteButton.setOnClickListener(v ->
+                new MaterialAlertDialogBuilder(activity)
+                        .setMessage("Are you sure you want to delete?")
+                        .setPositiveButton("DELETE", (dialogInterface, i) -> {
                             // Start the fade-out animation
                             ViewPropertyAnimator animator = holder.itemView.animate();
                             animator.alpha(0f).setDuration(200).setListener(new AnimatorListenerAdapter() {
                                 @Override
                                 public void onAnimationEnd(Animator animation) {
                                     // Remove the user from the list and notify the adapter
-                                    int position = holder.getAdapterPosition();
+                                    int position = holder.getBindingAdapterPosition();
                                     usersList.remove(position);
                                     notifyItemRemoved(position);
                                     if (actionListener != null) {
@@ -95,40 +79,29 @@ public class UsersListAdapter extends RecyclerView.Adapter<UsersViewHolder> {
                                     }
                                 }
                             }).start();
-                        }
-                    })
-                    .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            // Close the dialog without doing anything
-                            dialogInterface.dismiss();
-                        }
-                    })
-                    .show();
-        });
+                        })
+                        .setNegativeButton("CANCEL", (dialogInterface, i) -> dialogInterface.dismiss())
+                        .show()
+        );
 
+        holder.cardView.setOnClickListener(view -> {
+            int adapterPosition = holder.getBindingAdapterPosition();
+            if (adapterPosition != RecyclerView.NO_POSITION) {
+                // Get the selected user
+                User selectedUser = usersList.get(adapterPosition);
 
-        holder.cardView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int adapterPosition = holder.getAdapterPosition();
-                if (adapterPosition != RecyclerView.NO_POSITION) {
-                    // Get the selected user
-                    User selectedUser = usersList.get(adapterPosition);
+                // Create an Intent to start UserDetailsActivity
+                Intent intent = new Intent(activity, UserDetailsActivity.class);
 
-                    // Create an Intent to start UserDetailsActivity
-                    Intent intent = new Intent(activity, UserDetailsActivity.class);
+                // Pass the selected user's details to the UserDetailsActivity
+                intent.putExtra("user", selectedUser);
 
-                    // Pass the selected user's details to the UserDetailsActivity
-                    intent.putExtra("user", selectedUser);
+                // Set up the transition for shared elements
+                ActivityOptions options = ActivityOptions
+                        .makeSceneTransitionAnimation(activity, holder.avatarImg, ViewCompat.getTransitionName(holder.avatarImg));
 
-                    // Set up the transition for shared elements
-                    ActivityOptions options = ActivityOptions
-                            .makeSceneTransitionAnimation(activity, holder.avatarImg, ViewCompat.getTransitionName(holder.avatarImg));
-
-                    // Start the UserDetailsActivity for result
-                    activity.startActivity(intent, options.toBundle());
-                }
+                // Start the UserDetailsActivity for result
+                activity.startActivity(intent, options.toBundle());
             }
         });
     }

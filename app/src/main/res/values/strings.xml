@@ -1,3 +1,30 @@
 <resources>
     <string name="app_name">My Users Application</string>
+    <string name="form_title">Add a New User</string>
+
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="email">Email</string>
+    <string name="first_name_colon">First Name:</string>
+    <string name="last_name_colon">Last Name:</string>
+    <string name="email_colon">Email:</string>
+
+    <string name="upload_avatar">Upload Avatar</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+
+    <string name="title_users">Users</string>
+    <string name="no_data">No Data</string>
+    <string name="empty_image_description">No data available image</string>
+    <string name="close">Close</string>
+    <string name="edit_user_details">Edit User Details</string>
+    <string name="upload_image">Upload Image</string>
+    <string name="user_details_title">User Details</string>
+    <string name="edit">Edit</string>
+
+    <string name="by_title">By Mor Siman Tov</string>
+    <string name="logo">Logo</string>
+    <string name="delete_user">Delete User</string>
+    <string name="delete">Delete</string>
+
 </resources>
