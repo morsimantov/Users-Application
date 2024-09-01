@@ -63,11 +63,12 @@ public class AddUserActivity extends AppCompatActivity {
         // Observe operationStatus
         usersViewModel.getOperationStatus().observe(this, statusMessage -> {
             if (statusMessage != null && !statusMessage.isEmpty()) {
-                // Show a message to the user
-                Snackbar.make(findViewById(android.R.id.content), statusMessage, Snackbar.LENGTH_SHORT).show();
                 // Finish the activity if user creation is successful
                 if (statusMessage.equals("User created successfully")) {
                     finish();
+                } else {
+                    // Show a message to the user
+                    Snackbar.make(findViewById(android.R.id.content), statusMessage, Snackbar.LENGTH_SHORT).show();
                 }
             }
         });
