@@ -51,12 +51,10 @@ The data is then saved in the local database.
 <br />
 
 > [!IMPORTANT]
-> To ensure that the user data is retrieved from the API only once during the initial launch, a boolean
-flag in Shared Preferences is used to track the initialization status of the database.
-> I assumed that the best approach to keep consistency is to retrieve the users from the API once when the app is launched and then manage them in
-the local database for subsequent operations.
-
-<br />
+> * I assumed that the best approach to keep consistency is to retrieve the users from the API once when the app is launched and then manage them in
+    the local database for subsequent operations.
+> * To ensure that the user data is retrieved from the API only once during the initial launch, a boolean
+    flag in Shared Preferences is used to track the initialization status of the database.
 
 ### User Details
 
