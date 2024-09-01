@@ -6,7 +6,7 @@ Date: 01.09.2024
 
 This document provides a summary of the recent extensions and updates implemented in the Users App.
 
-2. New Features and Enhancements
+2. Features and Enhancements
 
 a. Users List
 
@@ -41,7 +41,7 @@ Architecture: MVVM
 Networking Library: Retrofit
 Database Library: Room
 
-4. Dependencies - Libraries Used
+4. Dependencies - Key Libraries
 
 Retrofit: For network operations and API integration.
 

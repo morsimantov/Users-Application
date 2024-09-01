@@ -65,7 +65,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="18dp"
-                    android:layout_marginRight="6dp"
+                    android:layout_marginRight="4dp"
                     android:fontFamily="@font/poppins"
                     android:text="@string/email_colon"
                     android:textColor="@color/black"
@@ -73,11 +73,13 @@
 
                 <TextView
                     android:id="@+id/email"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:layout_marginTop="18dp"
                     android:fontFamily="@font/poppins"
                     android:maxLines="1"
+                    android:ellipsize="end"
                     android:textColor="@color/purple_500"
                     android:textSize="12sp" />
             </LinearLayout>
