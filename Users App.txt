@@ -1,0 +1,59 @@
+Users App - Extensions and Updates
+
+Date: 01.09.2024
+
+1. Overview
+
+This document provides a summary of the recent extensions and updates implemented in the Users App.
+
+2. New Features and Enhancements
+
+a. Users List
+
+API Integration: Added functionality to fetch user data from the ReqRes API and display it in a list format.
+Local Storage: Implemented Room database to save user data locally for offline access and performance improvements.
+Initialization Check: Added a boolean flag in Shared Preferences to ensure the API is called only once during the initial launch.
+
+b. User Details
+
+Detailed View: Created a detailed view screen to display and manage individual user information.
+Edit and Delete: Enabled functionalities to edit or delete user information from the detailed view screen.
+
+c. Add a User
+
+User Creation: Added a new user through a dedicated screen accessible via a floating action button on the Users List screen.
+Validation: Incorporated validation to prevent the addition of users with existing email addresses.
+
+d. Delete User
+
+User Removal: Enabled user removal from the list using a delete icon button and through the detailed view screen.
+Deletion Options: Provided a contextual menu in the detailed view for user deletion.
+
+e. Update User
+
+Edit Functionality: Added the ability to update user details, including changing their avatar.
+Email Validation: Prevented updating the email to an address already in use by another user.
+
+3. Technical Specifications
+
+Programming Language: Java
+Architecture: MVVM
+Networking Library: Retrofit
+Database Library: Room
+
+4. Libraries Used
+
+Retrofit: For network operations and API integration.
+
+Room Database: For local storage of user data.
+
+Picasso: For image loading and caching.
+
+Material Design: For UI components and design elements.
+
+5. Additional Features
+
+Pagination: Implemented pagination in RecyclerView and Room database to handle large datasets efficiently.
+Error Handling: Added snackbar messages for error handling related to API requests and input validation.
+Splash Screen: Introduced a splash screen for a better user experience during app startup.
+Transition Animations: Added transition animations between activities and animated buttons and operations, like deletion.

@@ -1,8 +1,9 @@
 # Users App
 
 1. [About](#About)
-2. [Installation](#Installation)
-3. [Usage](#Usage)
+2. [Dependencies](#Dependencies)
+3. [Installation](#Installation)
+4. [Usage](#Usage)
 
 ## About
 
@@ -21,6 +22,14 @@ The application follows the Model-View-ViewModel (MVVM) architecture to ensure a
 * Networking Library: Retrofit
 * Database Library: Room
 
+## Dependencies
+
+* *Retrofit* - for network operations and API integration.
+* *Room Database* - for local storage of user data.
+* *Picasso* - for image loading and caching.
+* *Material Design* - for UI components and design elements.
+* *Paging library* - for pagination.
+
 ## Installation
 
 1. **Clone the Repository**
@@ -30,13 +39,13 @@ The application follows the Model-View-ViewModel (MVVM) architecture to ensure a
    ```
 
 2. **Open the Project**
-   * Open Android Studio and select "Open an existing project."
-   * Navigate to the cloned project directory and open it.
+    * Open Android Studio and select "Open an existing project."
+    * Navigate to the cloned project directory and open it.
 
 
 3. **Build and Run**
-   * Ensure you have an emulator or a physical device connected.
-   * Click on the "Run" button in Android Studio to build and run the application.
+    * Ensure you have an emulator or a physical device connected.
+    * Click on the "Run" button in Android Studio to build and run the application.
 
 ## Usage
 
